@@ -166,3 +166,6 @@ console.log(energy * 1.5);   // 75
 - Special numeric values (`NaN`, `Infinity`) propagate according to JavaScript semantics.
 
 ---
+
+
+ return Math.abs(sum1 - sum2);
