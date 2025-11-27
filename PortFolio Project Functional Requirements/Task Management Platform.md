@@ -63,7 +63,7 @@ A collaborative, secure, and extensible task management system for individuals a
   - Dashboard view: tasks by status/user/date, activity feed, recent file uploads, upcoming deadlines.
 - **Tasks & Subtasks:**  
   - CRUD, unlimited per project.  
-  - Attributes: title, description (markdown), priority, estimate (time/story points), due date/time (UTC/user'S TZ aware), list of assignees, tags, one-level subtasks, parent_id, dependencies (blocked by/blocking).
+  - Attributes: title, description (markdown), priority, estimate (time/story points), due date/time (UTC/user'S TZ aware), list of assignees, tags, one-level subtasks, parent_id, dependencies (blockers, precedents), recurrence (RFC 5545), completedAt, soft-deleted, attachments.
   - Batch actions: bulk assign, status change, move/copy between projects, batch upload via CSV.
   - Task sorting and grouping by field(s) (examples: by assigned user, by due date).
   - Recurring tasks spawn automatically according to CRON/recurrence pattern.
