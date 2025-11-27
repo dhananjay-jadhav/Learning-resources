@@ -10,7 +10,7 @@ A collaborative, secure, and extensible task management system for individuals a
 
 ## 2. Target Audience
 
-- **Individual professionals:** Freelancers, consultants, or anyone handling multiple personal or client projects, needing centralized management, reminders, secure file storage, and audit/history of their work.
+- **Individual professionals:** Freelancers, consultants, or anyone handling multiple personal or client projects, needing centralized management, reminders, secure file storage, and audit/history of interactions.
 - **Small/medium teams:** Teams must manage parallel projects, divvy up tasks, see progress in real time, share files securely, and avoid duplicate communication/churn.
 - **Project managers:** Need macro- and micro-views (dashboards, boards, calendar, analytics), bottleneck alerts, exportable reports, and flexible assignment.
 - **Organizations (with compliance):** Businesses, non-profits, or regulated industries that value data isolation, full audit trails, export for GDPR, granular role management, and API access.
@@ -168,6 +168,48 @@ A collaborative, secure, and extensible task management system for individuals a
   - Deep event logging—CRUD, login/logout, role changes, file access, API key use, webhook invocations.
 - **GDPR:**  
   - Data export endpoints, account/org delete, complete data scrubs, background job for hard-delete.
+
+---
+
+### 4.10 MongoDB-Powered Features & Learning Objectives
+
+In addition to relational data in PostgreSQL, the system will add a dedicated MongoDB database for select features that are naturally document-oriented, suited for flexible/no-schema storage, or require handling large, nested, or rapidly mutating data. This enables in-depth learning and hands-on experience with MongoDB (from basics to advanced).
+
+#### 4.10.1 MongoDB Use Cases
+
+- **Activity & Audit Logs (Uncapped, Nested, and Time-Series):**
+  - Store all raw activity/audit/event logs in MongoDB as documents, including unstructured metadata, request payloads, computed diffs, and trace context.
+  - Use time-based partitioning/TTL collections for auto-expiry and efficient querying/scanning.
+  - Implement aggregation pipelines and MapReduce for analytic queries over log/event data.
+
+- **User Action History/Undo Stack (Versioning & Temporal Documents):**
+  - Every user’s “undo stack” (recent actions that could be reverted) is modeled as a MongoDB document with embedded subdocs per action, including context, before/after states.
+  - Learn and demonstrate upsert, array-updating operators, positional/document matching, anchors, nested querying.
+
+- **Document Attachments Metadata (Meta, Hierarchical, Taggable):**
+  - Store all file attachment metadata in MongoDB (the actual file stays on S3/Minio), leveraging document references: a single doc per file with arbitrary tags, rich user comments, review history, and derived properties.
+  - Practice MongoDB indexing for fast lookups, compound/partial/text indexes, and covering queries.
+
+- **Real-Time Collaboration State (Ephemeral Session State):**
+  - Use MongoDB as a backing store for in-progress edit/collaboration buffers (e.g., when multiple users are editing the same project/task note), using change streams, atomic document updates, and concurrent editing patterns.
+  - Learn about shard keys, optimistic/pessimistic concurrency, and watch/subscribe via MongoDB drivers.
+
+- **Notification Preferences (Dynamic, Arbitrary Schemas):**
+  - Support user-customizable notification rules—stored as arbitrary JSON structures in MongoDB and interpreted at runtime (e.g., “when X happens, send email/push to Y devices unless Z”).
+  - Query/filter on deeply nested fields, validate against JSON schemas.
+
+- **Learning Objectives Checklist** (demonstrated via above features):
+  - Get hands-on with CRUD, updates, deletes, upserts, aggregations, indexes, text search, TTL, geo-queries, and schema validation.
+  - Master advanced MongoDB: transaction support, bulk writes, GridFS basics, change streams, sharding, performance tuning, and backup/restore/replica sets (for dev clusters).
+  - Integrate strongly with the NestJS API (using Mongoose or the official driver) for best practices in schema management, lifecycle hooks, and data modeling in real code.
+
+#### 4.10.2 Developer Experience
+
+- **Database Bootstrap:** Seed scripts will auto-populate MongoDB with sample event logs, files metadata, user undo histories, and notification rules for playground/demo use.
+- **Admin & Explore UI:** Dedicated admin pages and “Mongo Playground” to run test queries, inspect collections, run aggregations, and view schema/model examples—all within your working app.
+- **Observability:** Metrics and logs for MongoDB usage, slow queries, replication/availability alerts, and “last query” explorer.
+
+**Note:** These MongoDB features are additive to existing PostgreSQL models; primary relational data (users, projects, tasks, workflow states) remain in Postgres to reinforce hybrid RDBMS + NoSQL architecture best practices.
 
 ---
 
