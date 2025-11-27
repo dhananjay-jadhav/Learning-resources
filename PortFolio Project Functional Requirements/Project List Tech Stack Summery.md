@@ -10,17 +10,18 @@ This section provides an at-a-glance summary and backend/frontend/infrastructure
 - **Backend API:** Nx Monorepo + NestJS (modular REST API, DTO/validation, OpenAPI docs)
 - **Queue/Worker:** BullMQ (NestJS process) using Redis for reminders, jobs, notifications
 - **Database:** PostgreSQL (with TypeORM for schema/migrations, UUIDs, strict constraints)
+- **NoSQL (for selected features):** MongoDB (activity logs, undo stacks, metadata, real-time state, dynamic preferences; see requirements)
 - **Search:** Elasticsearch (tasks, comments, projects, fulltext & advanced filter)
 - **Cache/Session:** Redis (user sessions, board/dash precompute, pub/sub notifications)
 - **File Storage:** S3 (AWS) or Minio (local/dev) via presigned URLs
 - **Frontend:** React (Nx, Redux Toolkit/RTK Query or React Query, SSR capable, a11y-first)
 - **Authentication:** Passport.js (JWT, Google/MS OAuth, 2FA)
 - **Docs & Types:** Shared types in Nx libs, auto-generated OpenAPI, Markdown/Swagger UI
-- **Infra/Operations:** Docker Compose (local/dev), Helm for production (Kubernetes-ready), AWS ECS/EKS as cloud deployment option, S3/Elasticache/Elasticsearch in AWS
+- **Infra/Operations:** Docker Compose (local/dev), Helm for production (Kubernetes-ready), AWS ECS/EKS as cloud deployment option, S3/Elasticache/Elasticsearch/MongoDB in AWS
 - **Monitoring:** Prometheus & Grafana (metrics), Sentry (tracing/errors), Winston logs (ELK-forwarded)
 - **Internationalization:** i18next
 - **Security:** RBAC in API/routes, encrypted secrets via AWS Secrets Manager
-- **System Design Note:** API, worker, search, and file-storage run as independently scalable pods/services, following modern microservice/cloud-native patterns for future scale-out to AWS (EKS or ECS, S3, OpenSearch, etc.)
+- **System Design Note:** API, worker, search, file-storage, and MongoDB-powered modules run as independently scalable pods/services, following modern microservice/cloud-native patterns for future scale-out to AWS (EKS or ECS).
 
 ---
 
