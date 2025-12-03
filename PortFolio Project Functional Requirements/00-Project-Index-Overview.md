@@ -292,6 +292,88 @@ graph LR
 
 ---
 
+## 🧠 Integrating Core Engineering Fundamentals
+
+> **Transform these portfolio projects into a comprehensive curriculum for engineering mastery and senior-level interview preparation.**
+
+Building projects is excellent for practical, hands-on experience. However, to bridge the gap between building projects and succeeding in top-tier interviews, it's crucial to explicitly integrate core computer science fundamentals. This section provides a framework for systematically studying and applying **Data Structures & Algorithms (DSA)**, **System Design**, and **Computer Networks (CN)** in the context of these 8 portfolio projects.
+
+### 🏗️ System Design: Treat Each Project as a System Design Problem
+
+Every project in this portfolio is an opportunity to practice real-world system design. Before writing code, ask yourself these questions:
+
+| Question | Example (Task Management Platform) |
+|----------|-----------------------------------|
+| **What are the functional requirements?** | Create tasks, assign users, track progress, set deadlines |
+| **What are the non-functional requirements?** | Support 10K concurrent users, <200ms response time, 99.9% uptime |
+| **How will you scale reads vs. writes?** | Read-heavy workload → Implement caching with Redis |
+| **What's your data model?** | PostgreSQL for relational data, MongoDB for activity logs |
+| **How do you handle failures?** | Circuit breakers, retry logic, graceful degradation |
+
+**Action Items:**
+- 📐 Before starting each project, draw a high-level architecture diagram
+- 📊 Estimate load: users, requests/second, data volume
+- 🔄 Design for horizontal scaling from day one
+- 📝 Document your design decisions and trade-offs
+
+### 📊 DSA: Apply Algorithms to Solve Real Problems
+
+Data structures and algorithms aren't just for interviews—they're the foundation of efficient software. Here's how to apply DSA concepts directly to the portfolio projects:
+
+| DSA Concept | Project Application | Problem Solved |
+|-------------|---------------------|----------------|
+| **Graphs (DFS/BFS)** | P1: Task Management | Task dependencies and critical path calculation |
+| **Topological Sort** | P1: Task Management | Determining task execution order |
+| **Trie** | P2: Book Library | Autocomplete for book search |
+| **Inverted Index** | P2: Book Library | Full-text search implementation |
+| **Priority Queue/Heap** | P3: Event Registration | Waitlist management with priority |
+| **[CRDT](https://crdt.tech/) (Conflict-free Replicated Data Types)** | P4: Document Collaboration | Real-time conflict resolution without coordination |
+| **Sliding Window** | P5: Fitness Tracker | Calculating rolling averages (e.g., 7-day step count) |
+| **Dynamic Programming** | P6: Finance Tracker | Budget optimization and forecasting |
+| **Collaborative Filtering (Matrix Factorization)** | P7: E-Learning | Content recommendations |
+| **KNN (K-Nearest Neighbors)** | P8: Media Watchlist | Content-based similar item recommendations |
+| **Graph Algorithms (PageRank, Random Walk)** | P8: Media Watchlist | Social graph-based recommendations |
+
+**Action Items:**
+- 🎯 Before implementing a feature, identify the underlying DSA problem
+- ⏱️ Analyze time and space complexity of your solutions
+- 🔧 Implement core algorithms from scratch at least once before using libraries
+- 📝 Keep a DSA journal: document which algorithms you used and why
+
+### 🌐 Computer Networks & OS: Understand the "Why" Behind Performance
+
+Understanding networks and operating systems helps you make informed engineering decisions about performance, latency, and resource management.
+
+| Concept | Project Application | Why It Matters |
+|---------|---------------------|----------------|
+| **TCP vs UDP** | P4: Document Collaboration | WebSocket uses TCP for reliable real-time updates |
+| **HTTP/2 & gRPC** | P7: E-Learning | Efficient microservice communication with multiplexing |
+| **CDN & Edge Caching** | All Projects | Reduce latency by serving static assets from edge locations |
+| **Connection Pooling** | All Projects | Reuse database connections to reduce overhead |
+| **Load Balancing (Round Robin, Least Connections)** | All Projects (AWS) | Distribute traffic efficiently across instances |
+| **DNS Resolution** | All Projects (AWS) | Route 53 for low-latency, reliable routing |
+| **Process vs Thread** | P5: Fitness Tracker | Use async I/O (single-threaded) for concurrent API calls; multiprocessing for CPU-bound data analysis |
+| **Memory Management** | P7, P8: AI/ML Projects | Efficient model loading and inference |
+
+**Action Items:**
+- 🔍 Use tools like `curl -v`, `tcpdump`, and browser DevTools to inspect network traffic
+- 📈 Monitor resource usage with `htop`, `docker stats`, and AWS CloudWatch
+- ⚡ Profile your applications to identify bottlenecks
+- 📚 Read about the OSI model and how each layer applies to your projects
+
+### 🎯 Integration Strategy: A Week-by-Week Approach
+
+| Week | Focus | Deliverable |
+|:----:|-------|-------------|
+| 1 | System Design | Architecture diagram + capacity estimation |
+| 2-3 | Core Implementation | Apply relevant DSA concepts as you build |
+| 4 | Optimization | Profile, identify bottlenecks, apply CN/OS knowledge |
+| 5 | Documentation | Write a design document explaining your decisions |
+
+By treating each project as both a **coding exercise** and a **learning laboratory for fundamentals**, you'll build a portfolio that demonstrates not just what you can build, but how you think as an engineer.
+
+---
+
 ## 🚀 Quick Start
 
 ### 📋 Prerequisites
