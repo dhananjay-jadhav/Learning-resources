@@ -522,7 +522,176 @@ graph TB
 
 ---
 
-## 6. AWS Deployment Architecture
+## 6. Frontend Functional & Technical Requirements
+
+### 6.1 UI/UX Pages & Screens
+
+| Page/Screen | Description | Key Components |
+|-------------|-------------|----------------|
+| **Landing Page** | Public page showcasing features | Hero section, Feature highlights, CTA buttons |
+| **Login/Register** | Authentication flows | Form inputs, OAuth buttons (Google, Apple) |
+| **Dashboard** | Personal library overview | Reading stats, Currently reading, Recommendations |
+| **Book Search** | Discovery and search | Search bar, Filter sidebar, Book grid/list |
+| **Book Detail** | Individual book view | Cover image, Metadata, Reviews, Add to shelf |
+| **My Library** | User's book collection | Shelf tabs, Book cards, Sorting options |
+| **Shelves** | Custom shelf management | Shelf list, Drag-drop books, Create/edit shelf |
+| **Reading Progress** | Track book progress | Progress bar, Page input, Notes section |
+| **Reviews** | Write and view reviews | Star rating, Rich text editor, Spoiler toggle |
+| **Profile** | User profile and stats | Avatar, Bio, Reading stats, Public/private toggle |
+| **Settings** | User preferences | Notification settings, Privacy, Theme |
+| **Social Feed** | Friend activity | Activity cards, Follow suggestions |
+
+### 6.2 Component Architecture
+
+```
+src/
+├── components/
+│   ├── common/                 # Shared UI components
+│   │   ├── Button/
+│   │   ├── Input/
+│   │   ├── Modal/
+│   │   ├── Dropdown/
+│   │   ├── Avatar/
+│   │   ├── Badge/
+│   │   ├── Card/
+│   │   ├── Rating/             # Star rating component
+│   │   ├── Pagination/
+│   │   └── Toast/
+│   ├── layout/                 # Layout components
+│   │   ├── Header/
+│   │   ├── Sidebar/
+│   │   ├── Footer/
+│   │   └── PageWrapper/
+│   ├── forms/                  # Form components
+│   │   ├── BookSearchForm/
+│   │   ├── ReviewForm/
+│   │   ├── ShelfForm/
+│   │   └── ProgressForm/
+│   ├── features/               # Feature-specific components
+│   │   ├── books/
+│   │   │   ├── BookCard/
+│   │   │   ├── BookGrid/
+│   │   │   ├── BookDetail/
+│   │   │   └── BookCover/
+│   │   ├── shelves/
+│   │   │   ├── ShelfList/
+│   │   │   ├── ShelfItem/
+│   │   │   └── ShelfSelector/
+│   │   ├── reviews/
+│   │   │   ├── ReviewCard/
+│   │   │   ├── ReviewList/
+│   │   │   └── ReviewEditor/
+│   │   └── reading/
+│   │       ├── ProgressTracker/
+│   │       ├── ReadingStats/
+│   │       └── GoalProgress/
+│   └── charts/                 # Data visualization
+│       ├── ReadingChart/
+│       ├── GenreBreakdown/
+│       └── YearlyProgress/
+├── graphql/                    # Apollo Client queries
+│   ├── queries/
+│   │   ├── books.ts
+│   │   ├── shelves.ts
+│   │   └── reviews.ts
+│   ├── mutations/
+│   │   ├── books.ts
+│   │   ├── shelves.ts
+│   │   └── reviews.ts
+│   └── subscriptions/
+│       ├── activity.ts
+│       └── notifications.ts
+├── hooks/                      # Custom React hooks
+│   ├── useAuth.ts
+│   ├── useBooks.ts
+│   ├── useShelves.ts
+│   ├── useReviews.ts
+│   └── useReadingProgress.ts
+├── store/                      # Local state (Zustand/Redux)
+│   ├── authStore.ts
+│   ├── uiStore.ts
+│   └── filterStore.ts
+├── utils/                      # Utility functions
+│   ├── formatters.ts
+│   ├── validators.ts
+│   └── bookUtils.ts
+└── types/                      # TypeScript types
+    ├── book.types.ts
+    ├── shelf.types.ts
+    └── review.types.ts
+```
+
+### 6.3 State Management
+
+| State Type | Solution | Use Case |
+|------------|----------|----------|
+| **Server State** | Apollo Client | GraphQL data, caching, optimistic updates |
+| **Client State** | Zustand | UI state, filters, theme preferences |
+| **Form State** | React Hook Form + Zod | Book entry, reviews, shelf creation |
+| **URL State** | React Router | Search queries, pagination, filters |
+| **Real-time State** | Apollo Subscriptions | Friend activity, new reviews |
+
+### 6.4 Client-Side Validation Rules
+
+| Field | Validation | Error Message |
+|-------|------------|---------------|
+| ISBN-10 | 10 digits, valid checksum | "Please enter a valid ISBN-10" |
+| ISBN-13 | 13 digits, starts with 978/979 | "Please enter a valid ISBN-13" |
+| Review Content | Min 50 chars, max 5000 chars | "Review must be 50-5000 characters" |
+| Rating | Integer 1-5 | "Please select a rating (1-5 stars)" |
+| Shelf Name | Required, 2-50 chars, unique | "Shelf name must be 2-50 characters and unique" |
+| Progress (Pages) | Number, ≤ total pages | "Pages read cannot exceed total pages" |
+
+### 6.5 Responsive Design Breakpoints
+
+| Breakpoint | Width | Layout Changes |
+|------------|-------|----------------|
+| `xs` | < 640px | Single column, bottom nav, stacked book cards |
+| `sm` | ≥ 640px | 2-column book grid, collapsible sidebar |
+| `md` | ≥ 768px | 3-column book grid, side navigation |
+| `lg` | ≥ 1024px | 4-column book grid, expanded sidebar |
+| `xl` | ≥ 1280px | 5-column book grid, full sidebar with stats |
+| `2xl` | ≥ 1536px | 6-column book grid, enhanced detail panels |
+
+### 6.6 Frontend Accessibility Requirements
+
+| Requirement | Implementation |
+|-------------|----------------|
+| **Keyboard Navigation** | Tab through books, Enter to view details, arrow keys in grids |
+| **Screen Reader Support** | Book title, author, rating announced; ARIA labels for all actions |
+| **Focus Management** | Focus returns to trigger after modal close |
+| **Color Contrast** | WCAG AA compliant for all text and UI elements |
+| **Image Alt Text** | Book covers have title and author as alt text |
+| **Form Accessibility** | Labels, error announcements, required field indicators |
+| **Skip Navigation** | Skip to main content, skip to search |
+| **Reduced Motion** | Disable book card hover animations when preferred |
+
+### 6.7 Frontend Performance Requirements
+
+| Metric | Target | Measurement |
+|--------|--------|-------------|
+| **First Contentful Paint (FCP)** | < 1.2s | Lighthouse |
+| **Largest Contentful Paint (LCP)** | < 2.0s | Lighthouse |
+| **Time to Interactive (TTI)** | < 3.0s | Lighthouse |
+| **Cumulative Layout Shift (CLS)** | < 0.1 | Lighthouse |
+| **Bundle Size (gzipped)** | < 180KB initial | Webpack Bundle Analyzer |
+| **Image Loading** | Lazy load book covers, WebP with fallback | IntersectionObserver |
+| **GraphQL Caching** | Apollo normalized cache, 5min TTL | Apollo DevTools |
+
+### 6.8 Frontend Testing Requirements
+
+| Test Type | Coverage Target | Tools |
+|-----------|-----------------|-------|
+| **Unit Tests** | > 85% components | Jest, React Testing Library |
+| **GraphQL Mocking** | All queries/mutations | MSW (Mock Service Worker) |
+| **Integration Tests** | Book CRUD, shelf management | Cypress Component Testing |
+| **E2E Tests** | Search, add book, review flow | Cypress, Playwright |
+| **Visual Regression** | Book cards, shelf views | Chromatic |
+| **Accessibility Tests** | All pages, modals | axe-core, jest-axe |
+
+---
+
+## 7. AWS Deployment Architecture
 
 ### Compute Strategy
 - **ECS Fargate** for API and Worker services
@@ -563,7 +732,7 @@ Pipeline:
 
 ---
 
-## 7. GraphQL Schema (Code-First)
+## 8. GraphQL Schema (Code-First)
 
 ```graphql
 type Query {
@@ -650,7 +819,7 @@ type User {
 
 ---
 
-## 8. Monorepo Structure
+## 9. Monorepo Structure
 
 ```
 book-library-system/
@@ -704,7 +873,7 @@ book-library-system/
 
 ---
 
-## 9. Success Criteria
+## 10. Success Criteria
 
 1. **GraphQL Performance**: Query response times <100ms for 95th percentile with DataLoader optimization
 2. **Search Quality**: Elasticsearch returns relevant results with typo tolerance and highlighting

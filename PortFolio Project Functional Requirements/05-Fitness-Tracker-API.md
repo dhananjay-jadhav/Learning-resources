@@ -551,7 +551,161 @@ graph TB
 
 ---
 
-## 6. AWS Deployment Architecture
+## 6. Frontend Functional & Technical Requirements
+
+### 6.1 UI/UX Pages & Screens
+
+| Page/Screen | Description | Key Components |
+|-------------|-------------|----------------|
+| **Landing Page** | App showcase | Hero, Features, Device integrations |
+| **Login/Register** | Authentication | OAuth buttons, Device connect CTAs |
+| **Dashboard** | Daily overview | Today's workout, Stats cards, Goals progress |
+| **Workout Log** | Log session | Exercise picker, Set tracker, Timer |
+| **Workout History** | Past workouts | Calendar view, Workout cards, Filters |
+| **Exercise Library** | Exercise catalog | Search, Categories, Video demos |
+| **Goals** | Goal management | Goal cards, Progress bars, Create modal |
+| **Analytics** | Progress charts | Line/bar charts, PR timeline, Trends |
+| **Body Metrics** | Health tracking | Weight chart, Measurements, Log form |
+| **Device Connections** | Wearable sync | Device cards, Sync status, Connect flow |
+| **Profile** | User settings | Avatar, Preferences, Privacy |
+| **Trainer Dashboard** | Client management | Client list, Assign workouts, Progress view |
+
+### 6.2 Component Architecture
+
+```
+src/
+├── components/
+│   ├── common/                 # Shared UI components
+│   │   ├── Button/
+│   │   ├── Input/
+│   │   ├── Modal/
+│   │   ├── Card/
+│   │   ├── ProgressBar/
+│   │   ├── Timer/
+│   │   ├── NumberInput/
+│   │   └── Toast/
+│   ├── layout/                 # Layout components
+│   │   ├── Header/
+│   │   ├── BottomNav/          # Mobile navigation
+│   │   ├── Sidebar/
+│   │   └── PageWrapper/
+│   ├── workout/                # Workout components
+│   │   ├── WorkoutCard/
+│   │   ├── ExercisePicker/
+│   │   ├── SetTracker/
+│   │   ├── RestTimer/
+│   │   ├── WorkoutSummary/
+│   │   └── PRBadge/
+│   ├── exercises/              # Exercise components
+│   │   ├── ExerciseCard/
+│   │   ├── ExerciseDetail/
+│   │   ├── VideoPlayer/
+│   │   └── MuscleMap/
+│   ├── goals/                  # Goal components
+│   │   ├── GoalCard/
+│   │   ├── GoalProgress/
+│   │   ├── StreakCounter/
+│   │   └── GoalForm/
+│   ├── charts/                 # Data visualization
+│   │   ├── ProgressChart/
+│   │   ├── WeightChart/
+│   │   ├── PRTimeline/
+│   │   └── WorkoutHeatmap/
+│   ├── devices/                # Device integration
+│   │   ├── DeviceCard/
+│   │   ├── SyncStatus/
+│   │   └── ConnectFlow/
+│   └── nutrition/              # Nutrition tracking
+│       ├── FoodSearch/
+│       ├── MealCard/
+│       └── MacroBreakdown/
+├── hooks/                      # Custom React hooks
+│   ├── useAuth.ts
+│   ├── useWorkout.ts
+│   ├── useExercises.ts
+│   ├── useGoals.ts
+│   ├── useDeviceSync.ts
+│   └── useTimer.ts
+├── store/                      # State management
+│   ├── workoutStore.ts         # Active workout state
+│   ├── exerciseStore.ts
+│   ├── settingsStore.ts
+│   └── syncStore.ts
+├── services/                   # API services
+│   ├── workoutService.ts
+│   ├── exerciseService.ts
+│   ├── goalService.ts
+│   └── deviceService.ts
+└── types/
+    ├── workout.types.ts
+    ├── exercise.types.ts
+    └── goal.types.ts
+```
+
+### 6.3 State Management
+
+| State Type | Solution | Use Case |
+|------------|----------|----------|
+| **Server State** | React Query / TanStack Query | Workouts, exercises, metrics |
+| **Active Workout** | Zustand | Current session, sets, timer |
+| **Form State** | React Hook Form + Zod | Log workout, add goals |
+| **Offline State** | React Query + IndexedDB | Offline workout logging |
+| **Device State** | React Query | Sync status, device data |
+
+### 6.4 Client-Side Validation Rules
+
+| Field | Validation | Error Message |
+|-------|------------|---------------|
+| Weight (kg/lb) | Positive number, ≤ 1000 | "Please enter a valid weight" |
+| Reps | Integer, 1-999 | "Reps must be between 1-999" |
+| Duration | Positive, ≤ 24 hours | "Duration must be less than 24 hours" |
+| Body Weight | Positive, realistic range | "Please enter a valid body weight" |
+| Goal Target | Positive, numeric | "Please enter a valid target" |
+| RPE | Integer, 1-10 | "RPE must be between 1-10" |
+
+### 6.5 Responsive Design Breakpoints
+
+| Breakpoint | Width | Layout Changes |
+|------------|-------|----------------|
+| `xs` | < 640px | Mobile-first, bottom nav, swipe gestures |
+| `sm` | ≥ 640px | Tablet portrait, larger touch targets |
+| `md` | ≥ 768px | Tablet landscape, side-by-side charts |
+| `lg` | ≥ 1024px | Desktop, sidebar navigation |
+| `xl` | ≥ 1280px | Dashboard grid, expanded charts |
+
+### 6.6 Frontend Accessibility Requirements
+
+| Requirement | Implementation |
+|-------------|----------------|
+| **Keyboard Navigation** | Tab through sets, Enter to log, space for timer |
+| **Screen Reader** | Workout progress announced, exercise instructions |
+| **Motor Accessibility** | Large touch targets, voice input for reps |
+| **Visual Accessibility** | High contrast charts, colorblind-friendly palettes |
+| **Focus Management** | Auto-focus next set, modal trapping |
+
+### 6.7 Frontend Performance Requirements
+
+| Metric | Target | Measurement |
+|--------|--------|-------------|
+| **First Contentful Paint (FCP)** | < 1.5s | Lighthouse |
+| **Time to Interactive (TTI)** | < 3.0s | Lighthouse |
+| **Offline Support** | Full workout logging | Service Worker |
+| **Bundle Size** | < 200KB initial | Webpack Analyzer |
+| **Chart Rendering** | < 500ms for 1 year data | Performance API |
+
+### 6.8 Frontend Testing Requirements
+
+| Test Type | Coverage Target | Tools |
+|-----------|-----------------|-------|
+| **Unit Tests** | > 80% components | Jest, RTL |
+| **Workout Flow** | Complete session logging | Cypress |
+| **Device Mocking** | All integrations | MSW |
+| **Offline Tests** | Log and sync | Cypress, Workbox |
+| **Accessibility** | All pages | axe-core |
+
+---
+
+## 7. AWS Deployment Architecture
 
 ### Compute Strategy
 - **ECS Fargate** for API and Celery worker services
@@ -593,7 +747,7 @@ Pipeline:
 
 ---
 
-## 7. AI/ML Feature Specification
+## 8. AI/ML Feature Specification
 
 ### Use Case: Workout Recommendations & PR Predictions
 
@@ -651,7 +805,7 @@ graph LR
 
 ---
 
-## 8. API Design (FastAPI)
+## 9. API Design (FastAPI)
 
 ```python
 # Router structure
@@ -725,7 +879,7 @@ async def get_progress_analytics(
 
 ---
 
-## 9. Monorepo Structure
+## 10. Monorepo Structure
 
 ```
 fitness-tracker-api/
@@ -788,7 +942,7 @@ fitness-tracker-api/
 
 ---
 
-## 10. Success Criteria
+## 11. Success Criteria
 
 1. **API Performance**: <100ms response time for 95th percentile requests
 2. **Device Sync Reliability**: 99% successful sync rate with proper error handling

@@ -551,7 +551,161 @@ graph TB
 
 ---
 
-## 6. AWS Deployment Architecture
+## 6. Frontend Functional & Technical Requirements
+
+### 6.1 UI/UX Pages & Screens
+
+| Page/Screen | Description | Key Components |
+|-------------|-------------|----------------|
+| **Landing Page** | Public marketing page with features, pricing | Hero section, Feature cards, CTA buttons, Testimonials |
+| **Login/Register** | Authentication flows | Form inputs, OAuth buttons, Password strength indicator |
+| **Dashboard** | Main workspace overview | Stats cards, Activity feed, Quick actions, Charts |
+| **Projects List** | All projects view with filtering | Project cards, Search/filter bar, Pagination |
+| **Project Board** | Kanban-style task board | Drag-drop columns, Task cards, Swimlanes |
+| **Task Detail** | Full task view with all attributes | Rich text editor, Comments, Attachments, History |
+| **Calendar View** | Timeline and calendar display | Month/week/day views, Event modals, Drag scheduling |
+| **Gantt Chart** | Project timeline visualization | Timeline bars, Dependencies, Milestones |
+| **Team/Members** | Organization member management | User list, Role badges, Invite modal |
+| **Settings** | User and org configuration | Tabbed settings, Form sections, Toggles |
+| **Profile** | User profile and preferences | Avatar upload, Form fields, Notification toggles |
+| **Analytics** | Reports and dashboards | Charts (bar, line, pie), Date pickers, Export buttons |
+
+### 6.2 Component Architecture
+
+```
+src/
+├── components/
+│   ├── common/                 # Shared UI components
+│   │   ├── Button/
+│   │   ├── Input/
+│   │   ├── Modal/
+│   │   ├── Dropdown/
+│   │   ├── Avatar/
+│   │   ├── Badge/
+│   │   ├── Card/
+│   │   ├── Table/
+│   │   ├── Pagination/
+│   │   └── Toast/
+│   ├── layout/                 # Layout components
+│   │   ├── Header/
+│   │   ├── Sidebar/
+│   │   ├── Footer/
+│   │   └── PageWrapper/
+│   ├── forms/                  # Form components
+│   │   ├── TaskForm/
+│   │   ├── ProjectForm/
+│   │   ├── CommentForm/
+│   │   └── FilterForm/
+│   ├── features/               # Feature-specific components
+│   │   ├── tasks/
+│   │   │   ├── TaskCard/
+│   │   │   ├── TaskList/
+│   │   │   ├── TaskBoard/
+│   │   │   └── TaskDetail/
+│   │   ├── projects/
+│   │   ├── calendar/
+│   │   └── analytics/
+│   └── charts/                 # Data visualization
+│       ├── BarChart/
+│       ├── LineChart/
+│       └── PieChart/
+├── hooks/                      # Custom React hooks
+│   ├── useAuth.ts
+│   ├── useTasks.ts
+│   ├── useProjects.ts
+│   ├── useWebSocket.ts
+│   └── useDebounce.ts
+├── store/                      # Redux Toolkit store
+│   ├── slices/
+│   │   ├── authSlice.ts
+│   │   ├── tasksSlice.ts
+│   │   ├── projectsSlice.ts
+│   │   └── uiSlice.ts
+│   └── store.ts
+├── services/                   # API services
+│   ├── api.ts
+│   ├── authService.ts
+│   ├── taskService.ts
+│   └── projectService.ts
+├── utils/                      # Utility functions
+│   ├── formatters.ts
+│   ├── validators.ts
+│   └── helpers.ts
+└── types/                      # TypeScript types
+    ├── task.types.ts
+    ├── project.types.ts
+    └── user.types.ts
+```
+
+### 6.3 State Management
+
+| State Type | Solution | Use Case |
+|------------|----------|----------|
+| **Server State** | React Query / TanStack Query | API data caching, background refetching |
+| **Client State** | Redux Toolkit | Auth state, UI preferences, filters |
+| **Form State** | React Hook Form | Form validation, submission handling |
+| **URL State** | React Router | Current route, query parameters |
+| **Local State** | useState/useReducer | Component-specific state |
+
+### 6.4 Client-Side Validation Rules
+
+| Field | Validation | Error Message |
+|-------|------------|---------------|
+| Email | RFC 5322 format | "Please enter a valid email address" |
+| Password | Min 8 chars, 1 uppercase, 1 number | "Password must be at least 8 characters with 1 uppercase and 1 number" |
+| Task Title | Required, 3-200 chars | "Title is required (3-200 characters)" |
+| Due Date | Must be future date | "Due date must be in the future" |
+| Priority | One of: low, medium, high, urgent | "Please select a valid priority" |
+| Tags | Max 10 tags, each max 30 chars | "Maximum 10 tags allowed (30 chars each)" |
+
+### 6.5 Responsive Design Breakpoints
+
+| Breakpoint | Width | Target Devices |
+|------------|-------|----------------|
+| `xs` | < 640px | Mobile phones (portrait) |
+| `sm` | ≥ 640px | Mobile phones (landscape), small tablets |
+| `md` | ≥ 768px | Tablets |
+| `lg` | ≥ 1024px | Laptops, small desktops |
+| `xl` | ≥ 1280px | Desktops |
+| `2xl` | ≥ 1536px | Large desktops |
+
+### 6.6 Frontend Accessibility Requirements
+
+| Requirement | Implementation |
+|-------------|----------------|
+| **Keyboard Navigation** | All interactive elements focusable via Tab, Enter/Space to activate |
+| **Screen Reader Support** | ARIA labels, roles, and live regions for dynamic content |
+| **Focus Management** | Visible focus indicators, focus trapping in modals |
+| **Color Contrast** | WCAG AA minimum (4.5:1 for text, 3:1 for UI components) |
+| **Skip Links** | "Skip to main content" link for keyboard users |
+| **Form Labels** | All inputs have associated labels, error messages announced |
+| **Alt Text** | All images have descriptive alt text |
+| **Reduced Motion** | Respect `prefers-reduced-motion` media query |
+
+### 6.7 Frontend Performance Requirements
+
+| Metric | Target | Measurement |
+|--------|--------|-------------|
+| **First Contentful Paint (FCP)** | < 1.5s | Lighthouse |
+| **Largest Contentful Paint (LCP)** | < 2.5s | Lighthouse |
+| **Time to Interactive (TTI)** | < 3.5s | Lighthouse |
+| **Cumulative Layout Shift (CLS)** | < 0.1 | Lighthouse |
+| **Bundle Size (gzipped)** | < 200KB initial | Webpack Bundle Analyzer |
+| **Image Optimization** | WebP format, lazy loading | Built-in Next.js optimization |
+
+### 6.8 Frontend Testing Requirements
+
+| Test Type | Coverage Target | Tools |
+|-----------|-----------------|-------|
+| **Unit Tests** | > 80% components | Jest, React Testing Library |
+| **Integration Tests** | Critical user flows | Cypress Component Testing |
+| **E2E Tests** | Core workflows | Cypress, Playwright |
+| **Visual Regression** | UI components | Chromatic, Percy |
+| **Accessibility Tests** | All pages | axe-core, pa11y |
+
+---
+
+## 7. AWS Deployment Architecture
 
 ### Compute Strategy
 - **ECS Fargate** for container orchestration without managing EC2 instances
@@ -600,7 +754,7 @@ Pipeline:
 
 ---
 
-## 7. Monorepo Structure
+## 8. Monorepo Structure
 
 ```
 task-management-platform/
@@ -745,7 +899,7 @@ Content-Type: application/json
 
 ---
 
-## 8. ✅ Success Criteria
+## 9. ✅ Success Criteria
 
 | Criteria | Target | Measurement |
 |----------|--------|-------------|

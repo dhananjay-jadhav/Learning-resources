@@ -537,7 +537,176 @@ graph TB
 
 ---
 
-## 6. AWS Deployment Architecture
+## 6. Frontend Functional & Technical Requirements
+
+### 6.1 UI/UX Pages & Screens
+
+| Page/Screen | Description | Key Components |
+|-------------|-------------|----------------|
+| **Landing Page** | Product overview | Hero section, Feature demos, CTA |
+| **Login/Register** | Authentication | SSO buttons, Form inputs, 2FA setup |
+| **Dashboard** | Recent documents | Document grid, Quick actions, Activity feed |
+| **Document Editor** | Real-time editing | TipTap/ProseMirror editor, Toolbar, Sidebar |
+| **Folder Browser** | File organization | Tree view, Breadcrumbs, Grid/list toggle |
+| **Document Sharing** | Permission management | User search, Role selector, Link sharing |
+| **Version History** | Document revisions | Timeline, Diff viewer, Restore button |
+| **Comments Panel** | Discussion threads | Comment list, Reply input, Resolve button |
+| **Team/Org Settings** | Administration | Member list, Role management, Billing |
+| **Search Results** | Global search | Result cards, Filters, Preview |
+| **Template Gallery** | Document templates | Template cards, Preview, Use button |
+| **Trash** | Deleted documents | Restore, Permanent delete |
+
+### 6.2 Component Architecture
+
+```
+src/
+├── components/
+│   ├── common/                 # Shared UI components
+│   │   ├── Button/
+│   │   ├── Input/
+│   │   ├── Modal/
+│   │   ├── Dropdown/
+│   │   ├── Avatar/
+│   │   ├── Tooltip/
+│   │   ├── TreeView/
+│   │   └── Toast/
+│   ├── layout/                 # Layout components
+│   │   ├── Header/
+│   │   ├── Sidebar/
+│   │   ├── EditorLayout/
+│   │   └── SplitPane/
+│   ├── editor/                 # Rich text editor
+│   │   ├── TipTapEditor/
+│   │   ├── Toolbar/
+│   │   ├── BubbleMenu/
+│   │   ├── SlashCommands/
+│   │   ├── CodeBlock/
+│   │   ├── MathBlock/
+│   │   ├── TableEditor/
+│   │   └── ImageEmbed/
+│   ├── collaboration/          # Real-time features
+│   │   ├── Cursors/
+│   │   ├── PresenceList/
+│   │   ├── TypingIndicator/
+│   │   └── SyncStatus/
+│   ├── features/               # Feature-specific
+│   │   ├── documents/
+│   │   │   ├── DocumentCard/
+│   │   │   ├── DocumentList/
+│   │   │   └── DocumentPreview/
+│   │   ├── folders/
+│   │   │   ├── FolderTree/
+│   │   │   └── Breadcrumbs/
+│   │   ├── comments/
+│   │   │   ├── CommentThread/
+│   │   │   ├── CommentInput/
+│   │   │   └── CommentBubble/
+│   │   ├── versions/
+│   │   │   ├── VersionTimeline/
+│   │   │   ├── DiffViewer/
+│   │   │   └── RestoreModal/
+│   │   └── sharing/
+│   │       ├── ShareModal/
+│   │       ├── PermissionList/
+│   │       └── LinkSettings/
+│   └── search/
+│       ├── SearchBar/
+│       ├── SearchResults/
+│       └── Filters/
+├── hooks/                      # Custom React hooks
+│   ├── useAuth.ts
+│   ├── useDocument.ts
+│   ├── useCollaboration.ts     # Yjs provider hook
+│   ├── usePresence.ts
+│   └── useVersionHistory.ts
+├── providers/                  # Context providers
+│   ├── YjsProvider.tsx         # CRDT sync provider
+│   ├── PresenceProvider.tsx
+│   └── EditorProvider.tsx
+├── store/                      # State management
+│   ├── documentStore.ts
+│   ├── uiStore.ts
+│   └── searchStore.ts
+└── types/
+    ├── document.types.ts
+    ├── collaboration.types.ts
+    └── editor.types.ts
+```
+
+### 6.3 State Management
+
+| State Type | Solution | Use Case |
+|------------|----------|----------|
+| **Document State** | Yjs (CRDT) | Real-time document content sync |
+| **Presence State** | Yjs Awareness | Cursor positions, user presence |
+| **UI State** | Zustand | Sidebar, panels, theme |
+| **Server State** | React Query | Folders, metadata, versions |
+| **Editor State** | TipTap/ProseMirror | Selection, formatting state |
+
+### 6.4 Real-Time Editor Features
+
+| Feature | Implementation |
+|---------|----------------|
+| **Live Cursors** | Yjs awareness, colored by user |
+| **Presence Indicators** | Avatar stack, active users sidebar |
+| **Typing Indicators** | Show when users are editing |
+| **Sync Status** | Saved/syncing/offline indicator |
+| **Conflict Resolution** | CRDT automatic merge |
+| **Offline Support** | IndexedDB persistence, sync on reconnect |
+
+### 6.5 Client-Side Validation Rules
+
+| Field | Validation | Error Message |
+|-------|------------|---------------|
+| Document Title | Required, 1-255 chars | "Title is required (max 255 characters)" |
+| Folder Name | Required, no special chars | "Folder name contains invalid characters" |
+| Share Email | Valid email format | "Please enter a valid email address" |
+| Link Password | Min 6 chars | "Password must be at least 6 characters" |
+| Link Expiry | Future date | "Expiry date must be in the future" |
+
+### 6.6 Responsive Design Breakpoints
+
+| Breakpoint | Width | Layout Changes |
+|------------|-------|----------------|
+| `xs` | < 640px | Mobile editor, bottom toolbar, sheet panels |
+| `sm` | ≥ 640px | Collapsible sidebar, floating toolbar |
+| `md` | ≥ 768px | Side panels, inline comments |
+| `lg` | ≥ 1024px | Full editor with sidebar, split view |
+| `xl` | ≥ 1280px | Extended toolbar, wide panels |
+
+### 6.7 Frontend Accessibility Requirements
+
+| Requirement | Implementation |
+|-------------|----------------|
+| **Keyboard Shortcuts** | Ctrl/Cmd+B/I/K, Markdown shortcuts |
+| **Screen Reader** | Content structure, toolbar labels, status announcements |
+| **Focus Management** | Editor focus, modal trapping, panel navigation |
+| **High Contrast** | Cursor colors, selection highlighting |
+| **Voice Input** | Browser speech-to-text integration |
+
+### 6.8 Frontend Performance Requirements
+
+| Metric | Target | Measurement |
+|--------|--------|-------------|
+| **Editor Load Time** | < 2s | Performance API |
+| **Typing Latency** | < 50ms | Input to render time |
+| **Sync Latency** | < 100ms | Update propagation |
+| **Bundle Size** | < 300KB initial, lazy load editor | Webpack Analyzer |
+| **Offline Cache** | 100+ documents | IndexedDB |
+
+### 6.9 Frontend Testing Requirements
+
+| Test Type | Coverage Target | Tools |
+|-----------|-----------------|-------|
+| **Unit Tests** | > 80% components | Jest, RTL |
+| **Editor Tests** | All formatting, blocks | TipTap testing utils |
+| **Collaboration Tests** | Multi-user scenarios | Yjs test utilities |
+| **E2E Tests** | Document CRUD, sharing | Cypress, Playwright |
+| **Accessibility Tests** | Editor, modals | axe-core |
+
+---
+
+## 7. AWS Deployment Architecture
 
 ### Compute Strategy
 - **ECS Fargate** for API, WebSocket, and Worker services
@@ -579,7 +748,7 @@ Pipeline:
 
 ---
 
-## 7. Real-Time Collaboration Architecture
+## 8. Real-Time Collaboration Architecture
 
 ```mermaid
 sequenceDiagram
@@ -669,7 +838,7 @@ class CollaborationServer {
 
 ---
 
-## 8. Monorepo Structure
+## 9. Monorepo Structure
 
 ```
 document-collaboration-platform/
@@ -726,7 +895,7 @@ document-collaboration-platform/
 
 ---
 
-## 9. Compliance & Audit Features
+## 10. Compliance & Audit Features
 
 ### Audit Log Structure
 
@@ -783,7 +952,7 @@ $$ LANGUAGE plpgsql;
 
 ---
 
-## 10. Success Criteria
+## 11. Success Criteria
 
 1. **Real-Time Performance**: Sub-50ms latency for collaborative edits
 2. **Conflict Resolution**: Zero data loss with concurrent editing by 10+ users

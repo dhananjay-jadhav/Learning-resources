@@ -573,7 +573,166 @@ graph TB
 
 ---
 
-## 6. AWS Deployment Architecture
+## 6. Frontend Functional & Technical Requirements
+
+### 6.1 UI/UX Pages & Screens
+
+| Page/Screen | Description | Key Components |
+|-------------|-------------|----------------|
+| **Landing Page** | Public event discovery | Hero section, Event carousel, Search bar |
+| **Event Directory** | Browse all events | Event cards, Filters, Map view toggle |
+| **Event Detail** | Individual event page | Event info, Sessions, Speakers, Registration CTA |
+| **Registration Flow** | Multi-step checkout | Ticket selection, Attendee form, Payment |
+| **Checkout** | Payment processing | Cart summary, Payment form, Stripe/PayPal elements |
+| **Confirmation** | Post-registration | Ticket details, QR code, Add to calendar |
+| **My Tickets** | User's registrations | Ticket cards, QR codes, Cancel/transfer options |
+| **Organizer Dashboard** | Event management | Stats cards, Attendee list, Revenue charts |
+| **Event Editor** | Create/edit events | Multi-step wizard, Session builder, Ticket config |
+| **Check-in App** | QR scanner | Camera view, Scan result, Attendee info |
+| **Analytics** | Reports dashboard | Charts, Export options, Date range picker |
+| **Settings** | Org configuration | Branding, Payment setup, Team management |
+
+### 6.2 Component Architecture
+
+```
+src/
+├── components/
+│   ├── common/                 # Shared UI components
+│   │   ├── Button/
+│   │   ├── Input/
+│   │   ├── Modal/
+│   │   ├── Card/
+│   │   ├── Badge/
+│   │   ├── DatePicker/
+│   │   ├── TimePicker/
+│   │   ├── Stepper/            # Multi-step flow
+│   │   └── Toast/
+│   ├── layout/                 # Layout components
+│   │   ├── Header/
+│   │   ├── Sidebar/
+│   │   ├── Footer/
+│   │   └── OrganizerLayout/
+│   ├── forms/                  # Form components
+│   │   ├── EventForm/
+│   │   ├── TicketForm/
+│   │   ├── AttendeeForm/
+│   │   └── PaymentForm/
+│   ├── features/               # Feature-specific components
+│   │   ├── events/
+│   │   │   ├── EventCard/
+│   │   │   ├── EventGrid/
+│   │   │   ├── EventDetail/
+│   │   │   └── SessionList/
+│   │   ├── registration/
+│   │   │   ├── TicketSelector/
+│   │   │   ├── AttendeeInfo/
+│   │   │   └── OrderSummary/
+│   │   ├── checkout/
+│   │   │   ├── PaymentMethods/
+│   │   │   ├── StripeElements/
+│   │   │   └── PayPalButton/
+│   │   ├── tickets/
+│   │   │   ├── TicketCard/
+│   │   │   ├── QRCode/
+│   │   │   └── TicketTransfer/
+│   │   └── checkin/
+│   │       ├── QRScanner/
+│   │       ├── ScanResult/
+│   │       └── AttendeeSearch/
+│   └── charts/                 # Analytics
+│       ├── RegistrationChart/
+│       ├── RevenueChart/
+│       └── AttendanceChart/
+├── hooks/                      # Custom React hooks
+│   ├── useAuth.ts
+│   ├── useEvents.ts
+│   ├── useRegistration.ts
+│   ├── usePayment.ts
+│   └── useQRScanner.ts
+├── store/                      # State management
+│   ├── slices/
+│   │   ├── authSlice.ts
+│   │   ├── eventsSlice.ts
+│   │   ├── cartSlice.ts
+│   │   └── checkoutSlice.ts
+│   └── store.ts
+├── services/                   # API services
+│   ├── eventService.ts
+│   ├── registrationService.ts
+│   ├── paymentService.ts
+│   └── checkinService.ts
+└── types/                      # TypeScript types
+    ├── event.types.ts
+    ├── ticket.types.ts
+    └── registration.types.ts
+```
+
+### 6.3 State Management
+
+| State Type | Solution | Use Case |
+|------------|----------|----------|
+| **Server State** | React Query | Events, registrations, attendees |
+| **Client State** | Redux Toolkit | Cart, checkout flow, UI state |
+| **Form State** | React Hook Form + Zod | Registration forms, event editor |
+| **Payment State** | Stripe/PayPal SDK | Payment elements, transaction status |
+| **Real-time State** | WebSocket | Check-in status, live dashboard updates |
+
+### 6.4 Client-Side Validation Rules
+
+| Field | Validation | Error Message |
+|-------|------------|---------------|
+| Email | RFC 5322 format | "Please enter a valid email address" |
+| Phone | E.164 format | "Please enter a valid phone number" |
+| Ticket Quantity | > 0, ≤ available | "Please select at least 1 ticket" |
+| Event Date | Future date, valid range | "Event must be scheduled for a future date" |
+| Promo Code | Alphanumeric, 4-20 chars | "Invalid promo code format" |
+| Card Number | Valid Luhn checksum | "Please enter a valid card number" |
+
+### 6.5 Responsive Design Breakpoints
+
+| Breakpoint | Width | Layout Changes |
+|------------|-------|----------------|
+| `xs` | < 640px | Single column, bottom sheet checkout |
+| `sm` | ≥ 640px | Event cards 2-column, sticky cart summary |
+| `md` | ≥ 768px | Event cards 3-column, side cart |
+| `lg` | ≥ 1024px | Dashboard grid, expanded filters |
+| `xl` | ≥ 1280px | Full dashboard, inline check-in |
+
+### 6.6 Frontend Accessibility Requirements
+
+| Requirement | Implementation |
+|-------------|----------------|
+| **Keyboard Navigation** | All checkout steps, modal dialogs, QR scanner fallback |
+| **Screen Reader Support** | Cart announcements, payment status, error messages |
+| **Focus Management** | Step progression, form error focus, modal trapping |
+| **Color Contrast** | Ticket status badges, price displays |
+| **Form Accessibility** | Required fields, inline validation, error summaries |
+| **Mobile Accessibility** | Touch targets 44x44px, swipe gestures |
+
+### 6.7 Frontend Performance Requirements
+
+| Metric | Target | Measurement |
+|--------|--------|-------------|
+| **First Contentful Paint (FCP)** | < 1.5s | Lighthouse |
+| **Largest Contentful Paint (LCP)** | < 2.5s | Lighthouse |
+| **Time to Interactive (TTI)** | < 4.0s | Lighthouse |
+| **Bundle Size (gzipped)** | < 250KB initial | Webpack Bundle Analyzer |
+| **Stripe.js Load** | Async, < 1s | Network waterfall |
+| **QR Scanner Init** | < 2s camera access | Performance API |
+
+### 6.8 Frontend Testing Requirements
+
+| Test Type | Coverage Target | Tools |
+|-----------|-----------------|-------|
+| **Unit Tests** | > 80% components | Jest, React Testing Library |
+| **Payment Mocking** | Stripe test mode | Stripe Test Cards |
+| **E2E Tests** | Registration, checkout flow | Cypress, Playwright |
+| **Mobile Tests** | QR scanner, responsive | Cypress mobile viewport |
+| **Accessibility Tests** | All pages, checkout flow | axe-core, pa11y |
+
+---
+
+## 7. AWS Deployment Architecture
 
 ### Compute Strategy
 - **ECS Fargate** for main API and worker services
@@ -615,7 +774,7 @@ Pipeline:
 
 ---
 
-## 7. Payment Flow Architecture
+## 8. Payment Flow Architecture
 
 ```mermaid
 sequenceDiagram
@@ -649,7 +808,7 @@ sequenceDiagram
 
 ---
 
-## 8. Monorepo Structure
+## 9. Monorepo Structure
 
 ```
 event-registration-platform/
@@ -709,7 +868,7 @@ event-registration-platform/
 
 ---
 
-## 9. Success Criteria
+## 10. Success Criteria
 
 1. **Registration Performance**: Handle 1000+ concurrent registrations during popular event launches
 2. **Payment Reliability**: 99.9% payment success rate with proper error handling and retry logic
