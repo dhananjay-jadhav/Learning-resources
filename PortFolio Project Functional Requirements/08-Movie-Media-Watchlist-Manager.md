@@ -32,6 +32,30 @@ A modern, extensible movie and TV show cataloging platform enabling users to tra
 - Build real-time activity feeds
 - Master model deployment and A/B testing
 
+### 🧠 Core Engineering Fundamentals
+
+This project provides excellent opportunities to apply and demonstrate core computer science concepts:
+
+| Area | Concept | Application in This Project |
+|------|---------|----------------------------|
+| **DSA** | KNN (K-Nearest Neighbors) | Find similar movies based on genre, cast, and user ratings |
+| **DSA** | Collaborative Filtering | Recommend movies based on users with similar watch history |
+| **DSA** | Graph Algorithms (PageRank) | Rank movies by influence in the social graph of recommendations |
+| **DSA** | Cosine Similarity | Measure similarity between movie feature vectors |
+| **DSA** | Hash Tables | Fast lookup for movie metadata and user preferences |
+| **System Design** | Recommendation Engine | Hybrid system combining content-based and collaborative filtering |
+| **System Design** | A/B Testing | Infrastructure for testing recommendation algorithm variations |
+| **System Design** | Feature Store | Cache computed features for real-time recommendation serving |
+| **Networks** | External API Integration | TMDb/OMDb API calls with caching and fallback strategies |
+| **Networks** | Activity Feeds | Real-time updates when friends add movies or write reviews |
+| **OS** | ML Model Serving | Deploy Python recommendation models with low-latency inference |
+| **OS** | Batch Processing | Nightly jobs to retrain recommendation models on new data |
+
+**Interview Preparation:**
+- Explain the difference between content-based and collaborative filtering
+- Discuss trade-offs when designing an A/B testing framework for recommendation algorithms
+- Design a recommendation system that handles millions of users and movies
+
 ---
 
 ## 2. Detailed Functional Requirements

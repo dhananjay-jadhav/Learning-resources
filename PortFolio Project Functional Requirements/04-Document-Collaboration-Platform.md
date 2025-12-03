@@ -32,6 +32,28 @@ A highly-collaborative, real-time document creation, editing, and sharing platfo
 - Build enterprise-grade compliance and audit features
 - Deploy real-time services at scale on AWS
 
+### 🧠 Core Engineering Fundamentals
+
+This project provides excellent opportunities to apply and demonstrate core computer science concepts:
+
+| Area | Concept | Application in This Project |
+|------|---------|----------------------------|
+| **DSA** | CRDT (Conflict-free Replicated Data Types) | Merge concurrent edits without coordination using mathematical properties |
+| **DSA** | Operational Transformation | Alternative approach to real-time collaborative editing |
+| **DSA** | Diff Algorithms | Compute document changes for version history and conflict resolution |
+| **DSA** | Linked Lists | Represent document structure for efficient insertions and deletions |
+| **System Design** | Consistency Models | Eventual consistency for collaborative editing; strong consistency for permissions |
+| **System Design** | Version Control | Design document versioning with branching and merge capabilities |
+| **System Design** | Presence System | Track active users and cursor positions in real-time |
+| **Networks** | WebSocket Protocol | Bidirectional communication for live editing and presence |
+| **Networks** | TCP vs UDP | Understand why WebSocket (TCP) is used for reliable document sync |
+| **OS** | Concurrency | Handle multiple users editing the same document section simultaneously |
+
+**Interview Preparation:**
+- Explain how CRDTs enable conflict-free collaboration without a central coordinator
+- Discuss trade-offs between Operational Transformation and CRDTs
+- Design a system to handle 100 concurrent editors on the same document
+
 ---
 
 ## 2. Detailed Functional Requirements

@@ -32,6 +32,28 @@ A scalable, secure, multi-tenant platform to create, manage, and monitor eventsâ
 - Build real-time check-in systems with WebSockets
 - Handle PCI compliance and secure payment flows
 
+### ðŸ§  Core Engineering Fundamentals
+
+This project provides excellent opportunities to apply and demonstrate core computer science concepts:
+
+| Area | Concept | Application in This Project |
+|------|---------|----------------------------|
+| **DSA** | Priority Queue/Heap | Manage event waitlists with priority (VIP, early-bird, standard) |
+| **DSA** | Hash Tables | Fast ticket validation and QR code lookup during check-in |
+| **DSA** | Sorting Algorithms | Order events by date, popularity, or relevance for discovery |
+| **System Design** | Multi-Tenancy | Design data isolation for multiple organizations sharing infrastructure |
+| **System Design** | Idempotency | Ensure payment operations are idempotent to handle retries safely |
+| **System Design** | Rate Limiting | Protect ticket purchase endpoints from bots and abuse |
+| **Networks** | HTTPS/TLS | Secure payment data transmission; PCI DSS compliance |
+| **Networks** | Webhooks | Handle async payment confirmations from Stripe/PayPal |
+| **Networks** | QR Code Scanning | Real-time check-in system with WebSocket status updates |
+| **OS** | Concurrency Control | Handle race conditions during limited ticket purchases |
+
+**Interview Preparation:**
+- Explain how you would prevent overselling tickets (concurrency and locking strategies)
+- Discuss idempotency in payment processing and why it matters
+- Design a system to handle 10K concurrent ticket purchases for a popular event
+
 ---
 
 ## 2. Detailed Functional Requirements
