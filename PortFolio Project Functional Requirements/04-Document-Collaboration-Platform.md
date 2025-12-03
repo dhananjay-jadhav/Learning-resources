@@ -224,7 +224,7 @@ Backend:
   Documentation: OpenAPI 3.0 (Fastify Swagger)
 
 Frontend:
-  Framework: React 18 / Next.js 14
+  Framework: Next.js 14
   State_Management: Zustand / React Query
   Editor: TipTap / ProseMirror / Yjs bindings
   Styling: TailwindCSS 3.x
@@ -537,7 +537,346 @@ graph TB
 
 ---
 
-## 6. AWS Deployment Architecture
+## 6. Frontend Functional & Technical Requirements
+
+### 6.1 UI/UX Pages & Screens
+
+| Page/Screen | Description | Key Components |
+|-------------|-------------|----------------|
+| **Landing Page** | Product overview | Hero section, Feature demos, CTA |
+| **Login/Register** | Authentication | SSO buttons, Form inputs, 2FA setup |
+| **Dashboard** | Recent documents | Document grid, Quick actions, Activity feed |
+| **Document Editor** | Real-time editing | TipTap/ProseMirror editor, Toolbar, Sidebar |
+| **Folder Browser** | File organization | Tree view, Breadcrumbs, Grid/list toggle |
+| **Document Sharing** | Permission management | User search, Role selector, Link sharing |
+| **Version History** | Document revisions | Timeline, Diff viewer, Restore button |
+| **Comments Panel** | Discussion threads | Comment list, Reply input, Resolve button |
+| **Team/Org Settings** | Administration | Member list, Role management, Billing |
+| **Search Results** | Global search | Result cards, Filters, Preview |
+| **Template Gallery** | Document templates | Template cards, Preview, Use button |
+| **Trash** | Deleted documents | Restore, Permanent delete |
+
+### 6.2 Component Architecture
+
+```
+src/
+├── components/
+│   ├── common/                 # Shared UI components
+│   │   ├── Button/
+│   │   ├── Input/
+│   │   ├── Modal/
+│   │   ├── Dropdown/
+│   │   ├── Avatar/
+│   │   ├── Tooltip/
+│   │   ├── TreeView/
+│   │   └── Toast/
+│   ├── layout/                 # Layout components
+│   │   ├── Header/
+│   │   ├── Sidebar/
+│   │   ├── EditorLayout/
+│   │   └── SplitPane/
+│   ├── editor/                 # Rich text editor
+│   │   ├── TipTapEditor/
+│   │   ├── Toolbar/
+│   │   ├── BubbleMenu/
+│   │   ├── SlashCommands/
+│   │   ├── CodeBlock/
+│   │   ├── MathBlock/
+│   │   ├── TableEditor/
+│   │   └── ImageEmbed/
+│   ├── collaboration/          # Real-time features
+│   │   ├── Cursors/
+│   │   ├── PresenceList/
+│   │   ├── TypingIndicator/
+│   │   └── SyncStatus/
+│   ├── features/               # Feature-specific
+│   │   ├── documents/
+│   │   │   ├── DocumentCard/
+│   │   │   ├── DocumentList/
+│   │   │   └── DocumentPreview/
+│   │   ├── folders/
+│   │   │   ├── FolderTree/
+│   │   │   └── Breadcrumbs/
+│   │   ├── comments/
+│   │   │   ├── CommentThread/
+│   │   │   ├── CommentInput/
+│   │   │   └── CommentBubble/
+│   │   ├── versions/
+│   │   │   ├── VersionTimeline/
+│   │   │   ├── DiffViewer/
+│   │   │   └── RestoreModal/
+│   │   └── sharing/
+│   │       ├── ShareModal/
+│   │       ├── PermissionList/
+│   │       └── LinkSettings/
+│   └── search/
+│       ├── SearchBar/
+│       ├── SearchResults/
+│       └── Filters/
+├── hooks/                      # Custom React hooks
+│   ├── useAuth.ts
+│   ├── useDocument.ts
+│   ├── useCollaboration.ts     # Yjs provider hook
+│   ├── usePresence.ts
+│   └── useVersionHistory.ts
+├── providers/                  # Context providers
+│   ├── YjsProvider.tsx         # CRDT sync provider
+│   ├── PresenceProvider.tsx
+│   └── EditorProvider.tsx
+├── store/                      # State management
+│   ├── documentStore.ts
+│   ├── uiStore.ts
+│   └── searchStore.ts
+└── types/
+    ├── document.types.ts
+    ├── collaboration.types.ts
+    └── editor.types.ts
+```
+
+### 6.3 State Management
+
+| State Type | Solution | Use Case |
+|------------|----------|----------|
+| **Document State** | Yjs (CRDT) | Real-time document content sync |
+| **Presence State** | Yjs Awareness | Cursor positions, user presence |
+| **UI State** | Zustand | Sidebar, panels, theme |
+| **Server State** | React Query | Folders, metadata, versions |
+| **Editor State** | TipTap/ProseMirror | Selection, formatting state |
+
+### 6.4 Real-Time Editor Features
+
+| Feature | Implementation |
+|---------|----------------|
+| **Live Cursors** | Yjs awareness, colored by user |
+| **Presence Indicators** | Avatar stack, active users sidebar |
+| **Typing Indicators** | Show when users are editing |
+| **Sync Status** | Saved/syncing/offline indicator |
+| **Conflict Resolution** | CRDT automatic merge |
+| **Offline Support** | IndexedDB persistence, sync on reconnect |
+
+### 6.5 Client-Side Validation Rules
+
+| Field | Validation | Error Message |
+|-------|------------|---------------|
+| Document Title | Required, 1-255 chars | "Title is required (max 255 characters)" |
+| Folder Name | Required, no special chars | "Folder name contains invalid characters" |
+| Share Email | Valid email format | "Please enter a valid email address" |
+| Link Password | Min 6 chars | "Password must be at least 6 characters" |
+| Link Expiry | Future date | "Expiry date must be in the future" |
+
+### 6.6 Responsive Design Breakpoints
+
+| Breakpoint | Width | Layout Changes |
+|------------|-------|----------------|
+| `xs` | < 640px | Mobile editor, bottom toolbar, sheet panels |
+| `sm` | ≥ 640px | Collapsible sidebar, floating toolbar |
+| `md` | ≥ 768px | Side panels, inline comments |
+| `lg` | ≥ 1024px | Full editor with sidebar, split view |
+| `xl` | ≥ 1280px | Extended toolbar, wide panels |
+
+### 6.7 Frontend Accessibility Requirements
+
+| Requirement | Implementation |
+|-------------|----------------|
+| **Keyboard Shortcuts** | Ctrl/Cmd+B/I/K, Markdown shortcuts |
+| **Screen Reader** | Content structure, toolbar labels, status announcements |
+| **Focus Management** | Editor focus, modal trapping, panel navigation |
+| **High Contrast** | Cursor colors, selection highlighting |
+| **Voice Input** | Browser speech-to-text integration |
+
+### 6.8 Frontend Performance Requirements
+
+| Metric | Target | Measurement |
+|--------|--------|-------------|
+| **Editor Load Time** | < 2s | Performance API |
+| **Typing Latency** | < 50ms | Input to render time |
+| **Sync Latency** | < 100ms | Update propagation |
+| **Bundle Size** | < 300KB initial, lazy load editor | Webpack Analyzer |
+| **Offline Cache** | 100+ documents | IndexedDB |
+
+### 6.9 Frontend Testing Requirements
+
+| Test Type | Coverage Target | Tools |
+|-----------|-----------------|-------|
+| **Unit Tests** | > 80% components | Jest, RTL |
+| **Editor Tests** | All formatting, blocks | TipTap testing utils |
+| **Collaboration Tests** | Multi-user scenarios | Yjs test utilities |
+| **E2E Tests** | Document CRUD, sharing | Cypress, Playwright |
+| **Accessibility Tests** | Editor, modals | axe-core |
+
+### 6.10 Microfrontend Architecture
+
+#### Architecture Overview
+
+| Aspect | Implementation |
+|--------|----------------|
+| **Framework** | Module Federation (Webpack 5) |
+| **Container App** | Shell application handling routing, auth, shared state |
+| **Remote Apps** | Editor, Dashboard, Settings, Templates |
+| **Communication** | Custom Events + Shared State Store |
+| **Deployment** | Independent deployment per microfrontend |
+
+#### Microfrontend Structure
+
+```
+document-collaboration-platform/
+├── apps/
+│   ├── shell/                      # Container application
+│   │   ├── src/
+│   │   │   ├── App.tsx             # Main routing & layout
+│   │   │   ├── bootstrap.tsx       # Dynamic remote loading
+│   │   │   ├── shared/
+│   │   │   │   ├── authContext.tsx # Shared authentication
+│   │   │   │   ├── eventBus.ts     # Cross-MFE communication
+│   │   │   │   └── sharedStore.ts  # Zustand shared state
+│   │   │   └── remotes.d.ts        # Remote type declarations
+│   │   └── webpack.config.js       # Module Federation config
+│   ├── editor-mfe/                 # Document editor microfrontend
+│   │   ├── src/
+│   │   │   ├── EditorApp.tsx
+│   │   │   ├── components/
+│   │   │   │   ├── TipTapEditor/
+│   │   │   │   ├── Toolbar/
+│   │   │   │   ├── Collaboration/
+│   │   │   │   └── Comments/
+│   │   │   └── exposes.ts          # Exposed components
+│   │   └── webpack.config.js
+│   ├── dashboard-mfe/              # Dashboard microfrontend
+│   │   ├── src/
+│   │   │   ├── DashboardApp.tsx
+│   │   │   ├── components/
+│   │   │   │   ├── DocumentGrid/
+│   │   │   │   ├── RecentFiles/
+│   │   │   │   ├── ActivityFeed/
+│   │   │   │   └── QuickActions/
+│   │   │   └── exposes.ts
+│   │   └── webpack.config.js
+│   ├── settings-mfe/               # Settings microfrontend
+│   │   ├── src/
+│   │   │   ├── SettingsApp.tsx
+│   │   │   ├── components/
+│   │   │   │   ├── TeamManagement/
+│   │   │   │   ├── Permissions/
+│   │   │   │   └── Integrations/
+│   │   │   └── exposes.ts
+│   │   └── webpack.config.js
+│   └── templates-mfe/              # Templates microfrontend
+│       ├── src/
+│       │   ├── TemplatesApp.tsx
+│       │   ├── components/
+│       │   │   ├── TemplateGallery/
+│       │   │   ├── TemplateEditor/
+│       │   │   └── TemplatePreview/
+│       │   └── exposes.ts
+│       └── webpack.config.js
+├── packages/
+│   ├── shared-ui/                  # Shared component library
+│   │   ├── src/
+│   │   │   ├── Button/
+│   │   │   ├── Modal/
+│   │   │   ├── Input/
+│   │   │   └── index.ts
+│   │   └── package.json
+│   ├── shared-utils/               # Shared utilities
+│   │   ├── src/
+│   │   │   ├── api.ts
+│   │   │   ├── auth.ts
+│   │   │   └── analytics.ts
+│   │   └── package.json
+│   └── shared-types/               # Shared TypeScript types
+│       ├── src/
+│       │   ├── document.types.ts
+│       │   ├── user.types.ts
+│       │   └── index.ts
+│       └── package.json
+└── infrastructure/
+    └── docker/
+        ├── shell.Dockerfile
+        ├── editor-mfe.Dockerfile
+        ├── dashboard-mfe.Dockerfile
+        └── nginx.conf              # Routing configuration
+```
+
+#### Module Federation Configuration
+
+```javascript
+// shell/webpack.config.js
+const ModuleFederationPlugin = require('webpack/lib/container/ModuleFederationPlugin');
+
+module.exports = {
+  plugins: [
+    new ModuleFederationPlugin({
+      name: 'shell',
+      remotes: {
+        editorMfe: 'editorMfe@/editor/remoteEntry.js',
+        dashboardMfe: 'dashboardMfe@/dashboard/remoteEntry.js',
+        settingsMfe: 'settingsMfe@/settings/remoteEntry.js',
+        templatesMfe: 'templatesMfe@/templates/remoteEntry.js',
+      },
+      shared: {
+        react: { singleton: true, requiredVersion: '^18.0.0' },
+        'react-dom': { singleton: true, requiredVersion: '^18.0.0' },
+        zustand: { singleton: true },
+        '@tanstack/react-query': { singleton: true },
+      },
+    }),
+  ],
+};
+
+// editor-mfe/webpack.config.js
+module.exports = {
+  plugins: [
+    new ModuleFederationPlugin({
+      name: 'editorMfe',
+      filename: 'remoteEntry.js',
+      exposes: {
+        './EditorApp': './src/EditorApp',
+        './EditorToolbar': './src/components/Toolbar',
+        './CollaborationPanel': './src/components/Collaboration',
+      },
+      shared: {
+        react: { singleton: true, requiredVersion: '^18.0.0' },
+        'react-dom': { singleton: true, requiredVersion: '^18.0.0' },
+        yjs: { singleton: true },
+        '@tiptap/react': { singleton: true },
+      },
+    }),
+  ],
+};
+```
+
+#### Cross-Microfrontend Communication
+
+| Pattern | Use Case | Implementation |
+|---------|----------|----------------|
+| **Custom Events** | Document saved, user logged out | `window.dispatchEvent(new CustomEvent('doc:saved'))` |
+| **Shared Store** | Current user, active document | Zustand store exposed from shell |
+| **URL State** | Document ID, view mode | React Router in shell, params to remotes |
+| **Props Drilling** | Config, callbacks | Shell passes to lazy-loaded remotes |
+
+#### Deployment Strategy
+
+| Aspect | Strategy |
+|--------|----------|
+| **Independent Deploys** | Each MFE has its own CI/CD pipeline |
+| **Versioning** | Semantic versioning per MFE |
+| **CDN Hosting** | CloudFront for remoteEntry.js files |
+| **Fallbacks** | Graceful degradation if remote fails to load |
+| **Cache Strategy** | Long cache for assets, short for remoteEntry.js |
+
+#### Microfrontend Testing
+
+| Test Type | Scope | Tools |
+|-----------|-------|-------|
+| **Unit Tests** | Per MFE | Jest, RTL within each MFE |
+| **Integration** | Cross-MFE communication | Cypress with multiple origins |
+| **Contract Tests** | Shared interfaces | Pact, MSW |
+| **Visual Regression** | Shared components | Chromatic |
+| **E2E** | Full application flow | Playwright |
+
+---
+
+## 7. AWS Deployment Architecture
 
 ### Compute Strategy
 - **ECS Fargate** for API, WebSocket, and Worker services
@@ -579,7 +918,7 @@ Pipeline:
 
 ---
 
-## 7. Real-Time Collaboration Architecture
+## 8. Real-Time Collaboration Architecture
 
 ```mermaid
 sequenceDiagram
@@ -669,7 +1008,7 @@ class CollaborationServer {
 
 ---
 
-## 8. Monorepo Structure
+## 9. Monorepo Structure
 
 ```
 document-collaboration-platform/
@@ -726,7 +1065,7 @@ document-collaboration-platform/
 
 ---
 
-## 9. Compliance & Audit Features
+## 10. Compliance & Audit Features
 
 ### Audit Log Structure
 
@@ -783,7 +1122,7 @@ $$ LANGUAGE plpgsql;
 
 ---
 
-## 10. Success Criteria
+## 11. Success Criteria
 
 1. **Real-Time Performance**: Sub-50ms latency for collaborative edits
 2. **Conflict Resolution**: Zero data loss with concurrent editing by 10+ users

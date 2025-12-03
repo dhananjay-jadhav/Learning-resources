@@ -209,7 +209,7 @@ Backend:
   Async_Tasks: Celery with Redis broker
 
 Frontend:
-  Framework: React 18 / Next.js 14
+  Framework: Next.js 14
   State_Management: Redux Toolkit / React Query
   Styling: TailwindCSS 3.x
   Charts: D3.js / Chart.js
@@ -529,7 +529,167 @@ graph TB
 
 ---
 
-## 6. AWS Deployment Architecture
+## 6. Frontend Functional & Technical Requirements
+
+### 6.1 UI/UX Pages & Screens
+
+| Page/Screen | Description | Key Components |
+|-------------|-------------|----------------|
+| **Landing Page** | Product overview | Features, Security badges, CTA |
+| **Login/Register** | Authentication | Plaid/TrueLayer connect, OAuth |
+| **Dashboard** | Financial overview | Net worth, Cashflow chart, Spending breakdown |
+| **Transactions** | Transaction list | Filters, Search, Category editor |
+| **Accounts** | Bank accounts | Account cards, Sync status, Add account |
+| **Budgets** | Budget management | Budget bars, Category limits, Alerts |
+| **Goals** | Financial goals | Goal cards, Progress, Contributions |
+| **Reports** | Analytics | Date range picker, Charts, Export |
+| **Investments** | Portfolio tracking | Holdings table, Performance chart |
+| **Categories** | Category management | Category tree, Rules, Icons |
+| **Settings** | App configuration | Bank connections, Notifications, Currency |
+| **Import** | Data import | CSV upload, Column mapping, Preview |
+
+### 6.2 Component Architecture
+
+```
+src/
+├── components/
+│   ├── common/                 # Shared UI components
+│   │   ├── Button/
+│   │   ├── Input/
+│   │   ├── Modal/
+│   │   ├── Card/
+│   │   ├── CurrencyInput/
+│   │   ├── DateRangePicker/
+│   │   ├── Dropdown/
+│   │   └── Toast/
+│   ├── layout/                 # Layout components
+│   │   ├── Header/
+│   │   ├── Sidebar/
+│   │   ├── Footer/
+│   │   └── DashboardGrid/
+│   ├── transactions/           # Transaction components
+│   │   ├── TransactionRow/
+│   │   ├── TransactionList/
+│   │   ├── TransactionModal/
+│   │   ├── CategorySelector/
+│   │   ├── SplitTransaction/
+│   │   └── BulkActions/
+│   ├── accounts/               # Account components
+│   │   ├── AccountCard/
+│   │   ├── AccountList/
+│   │   ├── SyncStatus/
+│   │   ├── PlaidLink/
+│   │   └── ManualAccount/
+│   ├── budgets/                # Budget components
+│   │   ├── BudgetCard/
+│   │   ├── BudgetProgress/
+│   │   ├── BudgetForm/
+│   │   └── OverspendAlert/
+│   ├── charts/                 # Data visualization
+│   │   ├── CashflowChart/
+│   │   ├── SpendingPie/
+│   │   ├── NetWorthChart/
+│   │   ├── TrendChart/
+│   │   └── CategoryBreakdown/
+│   ├── goals/                  # Goal components
+│   │   ├── GoalCard/
+│   │   ├── GoalProgress/
+│   │   └── ContributionModal/
+│   └── investments/            # Investment components
+│       ├── HoldingRow/
+│       ├── PortfolioChart/
+│       └── PerformanceTable/
+├── hooks/                      # Custom React hooks
+│   ├── useAuth.ts
+│   ├── useTransactions.ts
+│   ├── useAccounts.ts
+│   ├── useBudgets.ts
+│   ├── usePlaidLink.ts
+│   └── useCurrency.ts
+├── store/                      # State management
+│   ├── slices/
+│   │   ├── authSlice.ts
+│   │   ├── transactionsSlice.ts
+│   │   ├── accountsSlice.ts
+│   │   ├── filtersSlice.ts
+│   │   └── uiSlice.ts
+│   └── store.ts
+├── services/                   # API services
+│   ├── transactionService.ts
+│   ├── accountService.ts
+│   ├── budgetService.ts
+│   └── reportService.ts
+└── types/
+    ├── transaction.types.ts
+    ├── account.types.ts
+    └── budget.types.ts
+```
+
+### 6.3 State Management
+
+| State Type | Solution | Use Case |
+|------------|----------|----------|
+| **Server State** | Redux Toolkit Query | Transactions, accounts, budgets |
+| **Client State** | Redux Toolkit | Filters, UI state, selections |
+| **Form State** | React Hook Form + Zod | Transaction edit, budget create |
+| **Bank Link State** | Plaid SDK | Plaid Link flow |
+| **Chart State** | Local state | Date ranges, chart options |
+
+### 6.4 Client-Side Validation Rules
+
+| Field | Validation | Error Message |
+|-------|------------|---------------|
+| Amount | Required, numeric, 2 decimals | "Please enter a valid amount" |
+| Date | Valid date, not future | "Date cannot be in the future" |
+| Category | Required | "Please select a category" |
+| Budget Amount | Positive number | "Budget must be a positive amount" |
+| Account Name | Required, 2-50 chars | "Account name must be 2-50 characters" |
+| Goal Target | Positive, ≥ current amount | "Target must be greater than current amount" |
+
+### 6.5 Responsive Design Breakpoints
+
+| Breakpoint | Width | Layout Changes |
+|------------|-------|----------------|
+| `xs` | < 640px | Mobile list view, bottom nav, sheet modals |
+| `sm` | ≥ 640px | Compact dashboard, swipe actions |
+| `md` | ≥ 768px | Side-by-side charts, inline editing |
+| `lg` | ≥ 1024px | Full dashboard grid, sidebar nav |
+| `xl` | ≥ 1280px | Extended charts, multi-column tables |
+
+### 6.6 Frontend Accessibility Requirements
+
+| Requirement | Implementation |
+|-------------|----------------|
+| **Keyboard Navigation** | Tab through transactions, keyboard shortcuts |
+| **Screen Reader** | Amount and category announced, chart summaries |
+| **Data Tables** | Proper table semantics, sortable headers |
+| **Color Contrast** | Positive/negative colors accessible |
+| **Form Accessibility** | Currency input labels, error announcements |
+| **Focus Indicators** | Visible focus on all interactive elements |
+
+### 6.7 Frontend Performance Requirements
+
+| Metric | Target | Measurement |
+|--------|--------|-------------|
+| **First Contentful Paint (FCP)** | < 1.5s | Lighthouse |
+| **Dashboard Load** | < 3s with 5 years data | Performance API |
+| **Transaction List** | Virtual scroll, 60fps | React Window |
+| **Chart Rendering** | < 500ms | D3/Chart.js metrics |
+| **Bundle Size** | < 250KB initial | Webpack Analyzer |
+
+### 6.8 Frontend Testing Requirements
+
+| Test Type | Coverage Target | Tools |
+|-----------|-----------------|-------|
+| **Unit Tests** | > 80% components | Jest, RTL |
+| **Transaction CRUD** | Full flow | Cypress |
+| **Plaid Mocking** | Link flow | Plaid Sandbox |
+| **Chart Tests** | Data rendering | RTL, snapshot |
+| **Accessibility** | All pages | axe-core |
+
+---
+
+## 7. AWS Deployment Architecture
 
 ### Compute Strategy
 - **ECS Fargate** for Django API and Celery workers
@@ -572,7 +732,7 @@ Pipeline:
 
 ---
 
-## 7. AI/ML Feature Specification
+## 8. AI/ML Feature Specification
 
 ### Use Case: Smart Categorization & Spending Predictions
 
@@ -632,7 +792,7 @@ graph LR
 
 ---
 
-## 8. API Design (Django REST Framework)
+## 9. API Design (Django REST Framework)
 
 ```python
 # urls.py structure
@@ -714,7 +874,7 @@ class BankConnectionView(APIView):
 
 ---
 
-## 9. Monorepo Structure
+## 10. Monorepo Structure
 
 ```
 personal-finance-tracker/
@@ -768,7 +928,7 @@ personal-finance-tracker/
 
 ---
 
-## 10. Transaction Categorization Flow
+## 11. Transaction Categorization Flow
 
 ```mermaid
 flowchart TD
@@ -791,7 +951,7 @@ flowchart TD
 
 ---
 
-## 11. Success Criteria
+## 12. Success Criteria
 
 1. **Data Sync Reliability**: 99.9% successful bank sync rate
 2. **Categorization Accuracy**: >85% auto-categorization accuracy

@@ -207,7 +207,7 @@ Python_Recommendation:
   Validation: Pydantic v2
 
 Frontend:
-  Framework: React 18 / Next.js 14
+  Framework: Next.js 14
   State_Management: Apollo Client + Zustand
   Styling: TailwindCSS 3.x
   Forms: React Hook Form + Zod
@@ -619,7 +619,175 @@ graph TB
 
 ---
 
-## 6. AWS Deployment Architecture
+## 6. Frontend Functional & Technical Requirements
+
+### 6.1 UI/UX Pages & Screens
+
+| Page/Screen | Description | Key Components |
+|-------------|-------------|----------------|
+| **Landing Page** | App overview | Hero, Popular movies, Features |
+| **Login/Register** | Authentication | OAuth buttons, TMDb connect |
+| **Dashboard** | Personal overview | Continue watching, Recommendations, Activity |
+| **Browse** | Discover content | Category tabs, Infinite scroll, Filters |
+| **Search** | Find movies/shows | Search bar, Auto-suggest, Results grid |
+| **Movie/Show Detail** | Title info | Poster, Metadata, Cast, Trailers, Reviews |
+| **TV Show Seasons** | Episode tracking | Season accordion, Episode checklist |
+| **Watchlist** | To-watch list | Drag-reorder, Grid/list toggle, Filters |
+| **My Lists** | Custom lists | List cards, Create/edit, Share options |
+| **Reviews** | User reviews | Write review, Rating stars, Spoiler toggle |
+| **Profile** | User profile | Avatar, Stats, Public lists, Followers |
+| **Friends** | Social features | Friend list, Activity feed, Discover users |
+| **Settings** | Preferences | Notifications, Privacy, Connected services |
+
+### 6.2 Component Architecture
+
+```
+src/
+├── components/
+│   ├── common/                 # Shared UI components
+│   │   ├── Button/
+│   │   ├── Input/
+│   │   ├── Modal/
+│   │   ├── Card/
+│   │   ├── Rating/             # Star rating
+│   │   ├── Badge/
+│   │   ├── InfiniteScroll/
+│   │   └── Toast/
+│   ├── layout/                 # Layout components
+│   │   ├── Header/
+│   │   ├── Sidebar/
+│   │   ├── Footer/
+│   │   └── PageWrapper/
+│   ├── media/                  # Media components
+│   │   ├── MediaCard/
+│   │   ├── MediaPoster/
+│   │   ├── MediaGrid/
+│   │   ├── MediaCarousel/
+│   │   ├── MediaDetail/
+│   │   └── TrailerPlayer/
+│   ├── tv/                     # TV show specific
+│   │   ├── SeasonList/
+│   │   ├── EpisodeRow/
+│   │   ├── EpisodeProgress/
+│   │   └── NextEpisode/
+│   ├── lists/                  # Watchlist components
+│   │   ├── ListCard/
+│   │   ├── ListGrid/
+│   │   ├── ListEditor/
+│   │   └── DragDropList/
+│   ├── reviews/                # Review components
+│   │   ├── ReviewCard/
+│   │   ├── ReviewForm/
+│   │   ├── StarRating/
+│   │   └── SpoilerToggle/
+│   ├── social/                 # Social features
+│   │   ├── UserCard/
+│   │   ├── ActivityFeed/
+│   │   ├── FollowButton/
+│   │   └── FriendSuggestions/
+│   ├── recommendations/        # AI recommendations
+│   │   ├── RecommendationRow/
+│   │   ├── ReasonBadge/
+│   │   └── SimilarMedia/
+│   └── search/
+│       ├── SearchBar/
+│       ├── AutoSuggest/
+│       ├── SearchResults/
+│       └── FilterPanel/
+├── graphql/                    # Apollo Client
+│   ├── queries/
+│   │   ├── media.ts
+│   │   ├── lists.ts
+│   │   └── recommendations.ts
+│   ├── mutations/
+│   │   ├── lists.ts
+│   │   ├── ratings.ts
+│   │   └── reviews.ts
+│   └── subscriptions/
+│       └── activity.ts
+├── hooks/                      # Custom React hooks
+│   ├── useAuth.ts
+│   ├── useMedia.ts
+│   ├── useLists.ts
+│   ├── useRatings.ts
+│   ├── useRecommendations.ts
+│   └── useInfiniteScroll.ts
+├── store/                      # State management
+│   ├── authStore.ts
+│   ├── uiStore.ts
+│   └── searchStore.ts
+└── types/
+    ├── media.types.ts
+    ├── list.types.ts
+    └── review.types.ts
+```
+
+### 6.3 State Management
+
+| State Type | Solution | Use Case |
+|------------|----------|----------|
+| **Server State** | Apollo Client | Media data, lists, recommendations |
+| **Client State** | Zustand | UI state, filters, theme |
+| **Form State** | React Hook Form | Reviews, list creation |
+| **URL State** | React Router | Search queries, filters |
+| **Real-time State** | Apollo Subscriptions | Friend activity |
+
+### 6.4 Client-Side Validation Rules
+
+| Field | Validation | Error Message |
+|-------|------------|---------------|
+| Rating | Integer 1-10 | "Please select a rating (1-10)" |
+| Review Content | Min 20 chars, max 5000 | "Review must be 20-5000 characters" |
+| List Name | Required, 2-100 chars | "List name must be 2-100 characters" |
+| List Description | Max 500 chars | "Description too long (max 500)" |
+| Search Query | Min 2 chars | "Enter at least 2 characters" |
+
+### 6.5 Responsive Design Breakpoints
+
+| Breakpoint | Width | Layout Changes |
+|------------|-------|----------------|
+| `xs` | < 640px | 2-column poster grid, bottom nav, sheet modals |
+| `sm` | ≥ 640px | 3-column grid, compact cards |
+| `md` | ≥ 768px | 4-column grid, side filters |
+| `lg` | ≥ 1024px | 5-column grid, sidebar nav |
+| `xl` | ≥ 1280px | 6-column grid, hover previews |
+| `2xl` | ≥ 1536px | 7+ columns, expanded detail panels |
+
+### 6.6 Frontend Accessibility Requirements
+
+| Requirement | Implementation |
+|-------------|----------------|
+| **Keyboard Navigation** | Arrow keys in grids, Enter to view details |
+| **Screen Reader** | Movie title, year, rating announced |
+| **Focus Management** | Focus visible on posters, modal trapping |
+| **Color Contrast** | Rating colors, badge colors accessible |
+| **Image Alt Text** | Movie title and year as alt text |
+| **Video Player** | Trailer player keyboard controls |
+
+### 6.7 Frontend Performance Requirements
+
+| Metric | Target | Measurement |
+|--------|--------|-------------|
+| **First Contentful Paint (FCP)** | < 1.5s | Lighthouse |
+| **Largest Contentful Paint (LCP)** | < 2.5s | Lighthouse |
+| **Image Loading** | Lazy load, blur-up placeholders | IntersectionObserver |
+| **Infinite Scroll** | 60fps, no jank | Performance API |
+| **Bundle Size** | < 200KB initial | Webpack Analyzer |
+| **Poster Images** | WebP, responsive sizes | Next.js Image |
+
+### 6.8 Frontend Testing Requirements
+
+| Test Type | Coverage Target | Tools |
+|-----------|-----------------|-------|
+| **Unit Tests** | > 80% components | Jest, RTL |
+| **GraphQL Mocking** | All queries | MSW |
+| **E2E Tests** | Search, add to list, rate | Cypress, Playwright |
+| **Visual Regression** | Media cards, grids | Chromatic |
+| **Accessibility** | All pages | axe-core |
+
+---
+
+## 7. AWS Deployment Architecture
 
 ### Compute Strategy
 - **Node.js GraphQL API** on ECS Fargate
@@ -662,7 +830,7 @@ Pipeline:
 
 ---
 
-## 7. AI/ML Feature Specification
+## 8. AI/ML Feature Specification
 
 ### Use Case 1: Personalized Recommendations
 
@@ -910,7 +1078,7 @@ class SocialRecommender:
 
 ---
 
-## 8. gRPC Service Definition
+## 9. gRPC Service Definition
 
 ```protobuf
 syntax = "proto3";
@@ -997,7 +1165,7 @@ message TrendingItem {
 
 ---
 
-## 9. Monorepo Structure
+## 10. Monorepo Structure
 
 ```
 movie-watchlist-manager/
@@ -1070,7 +1238,7 @@ movie-watchlist-manager/
 
 ---
 
-## 10. GraphQL Schema
+## 11. GraphQL Schema
 
 ```graphql
 type Query {
@@ -1162,7 +1330,7 @@ enum RecommendationSource {
 
 ---
 
-## 11. Success Criteria
+## 12. Success Criteria
 
 1. **Recommendation Quality**: >25% click-through rate on recommendations
 2. **Personalization**: Users engage 40% more with personalized vs. generic suggestions

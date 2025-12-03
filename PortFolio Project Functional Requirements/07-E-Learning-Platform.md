@@ -208,7 +208,7 @@ Python_AI:
   Validation: Pydantic v2
 
 Frontend:
-  Framework: React 18 / Next.js 14
+  Framework: Next.js 14
   State_Management: React Query / Zustand
   Styling: TailwindCSS 3.x
   Video_Player: Video.js / Plyr
@@ -553,7 +553,173 @@ graph TB
 
 ---
 
-## 6. AWS Deployment Architecture
+## 6. Frontend Functional & Technical Requirements
+
+### 6.1 UI/UX Pages & Screens
+
+| Page/Screen | Description | Key Components |
+|-------------|-------------|----------------|
+| **Landing Page** | Course marketplace | Hero, Featured courses, Categories |
+| **Login/Register** | Authentication | SSO options, Role selection |
+| **Course Catalog** | Browse courses | Course cards, Filters, Search |
+| **Course Detail** | Individual course | Syllabus, Reviews, Enroll button |
+| **Course Player** | Learning interface | Video player, Progress bar, Notes |
+| **Quiz/Assessment** | Interactive quizzes | Question types, Timer, Submit |
+| **Assignment Submit** | Upload assignments | File upload, Text editor, Rubric view |
+| **Dashboard (Student)** | Learning progress | Enrolled courses, Progress, Certificates |
+| **Dashboard (Instructor)** | Teaching overview | Course stats, Student progress, Grading |
+| **Course Editor** | Create/edit course | Module builder, Lesson editor, Quiz builder |
+| **Gradebook** | Grading interface | Student list, Score entry, Feedback |
+| **Discussion Forum** | Course discussions | Thread list, Post editor, Reply |
+| **Live Class** | Video conferencing | Zoom/Jitsi embed, Chat, Screen share |
+| **Certificate View** | Certificate display | PDF preview, Download, Share |
+
+### 6.2 Component Architecture
+
+```
+src/
+├── components/
+│   ├── common/                 # Shared UI components
+│   │   ├── Button/
+│   │   ├── Input/
+│   │   ├── Modal/
+│   │   ├── Card/
+│   │   ├── ProgressBar/
+│   │   ├── Badge/
+│   │   ├── Tabs/
+│   │   └── Toast/
+│   ├── layout/                 # Layout components
+│   │   ├── Header/
+│   │   ├── Sidebar/
+│   │   ├── CourseLayout/
+│   │   └── PlayerLayout/
+│   ├── courses/                # Course components
+│   │   ├── CourseCard/
+│   │   ├── CourseGrid/
+│   │   ├── Syllabus/
+│   │   ├── ModuleList/
+│   │   └── LessonItem/
+│   ├── player/                 # Video player
+│   │   ├── VideoPlayer/
+│   │   ├── PlayerControls/
+│   │   ├── TranscriptPanel/
+│   │   ├── NotesPanel/
+│   │   └── ProgressTracker/
+│   ├── quizzes/                # Quiz components
+│   │   ├── QuizContainer/
+│   │   ├── QuestionTypes/
+│   │   │   ├── MultipleChoice/
+│   │   │   ├── TrueFalse/
+│   │   │   ├── ShortAnswer/
+│   │   │   └── Essay/
+│   │   ├── QuizTimer/
+│   │   └── QuizResults/
+│   ├── assignments/            # Assignment components
+│   │   ├── AssignmentCard/
+│   │   ├── SubmissionForm/
+│   │   ├── RubricView/
+│   │   └── FeedbackView/
+│   ├── discussions/            # Forum components
+│   │   ├── ThreadList/
+│   │   ├── PostCard/
+│   │   ├── ReplyEditor/
+│   │   └── MentionInput/
+│   ├── editor/                 # Course authoring
+│   │   ├── ModuleEditor/
+│   │   ├── LessonEditor/
+│   │   ├── QuizBuilder/
+│   │   └── ContentUploader/
+│   └── charts/                 # Analytics
+│       ├── ProgressChart/
+│       ├── CompletionRate/
+│       └── ScoreDistribution/
+├── hooks/                      # Custom React hooks
+│   ├── useAuth.ts
+│   ├── useCourse.ts
+│   ├── usePlayer.ts
+│   ├── useQuiz.ts
+│   ├── useProgress.ts
+│   └── useDiscussion.ts
+├── store/                      # State management
+│   ├── playerStore.ts          # Video player state
+│   ├── quizStore.ts            # Quiz attempt state
+│   ├── progressStore.ts
+│   └── uiStore.ts
+├── services/                   # API services
+│   ├── courseService.ts
+│   ├── enrollmentService.ts
+│   ├── progressService.ts
+│   └── submissionService.ts
+└── types/
+    ├── course.types.ts
+    ├── lesson.types.ts
+    └── quiz.types.ts
+```
+
+### 6.3 State Management
+
+| State Type | Solution | Use Case |
+|------------|----------|----------|
+| **Server State** | React Query | Courses, enrollments, progress |
+| **Player State** | Zustand | Video position, playback state |
+| **Quiz State** | Zustand | Current question, answers, timer |
+| **Form State** | React Hook Form | Submissions, editor forms |
+| **Real-time State** | WebSocket | Live class, discussions |
+
+### 6.4 Client-Side Validation Rules
+
+| Field | Validation | Error Message |
+|-------|------------|---------------|
+| Course Title | Required, 5-200 chars | "Title must be 5-200 characters" |
+| Lesson Duration | Positive integer | "Duration must be a positive number" |
+| Quiz Time Limit | 1-180 minutes | "Time limit must be 1-180 minutes" |
+| Assignment File | Max 50MB, allowed types | "File too large or invalid format" |
+| Discussion Post | Min 10 chars | "Post must be at least 10 characters" |
+| Passing Score | 0-100 | "Passing score must be 0-100" |
+
+### 6.5 Responsive Design Breakpoints
+
+| Breakpoint | Width | Layout Changes |
+|------------|-------|----------------|
+| `xs` | < 640px | Mobile player, fullscreen video, bottom nav |
+| `sm` | ≥ 640px | Compact syllabus, floating video |
+| `md` | ≥ 768px | Side syllabus, picture-in-picture |
+| `lg` | ≥ 1024px | Full player layout, side panels |
+| `xl` | ≥ 1280px | Theater mode, expanded notes |
+
+### 6.6 Frontend Accessibility Requirements
+
+| Requirement | Implementation |
+|-------------|----------------|
+| **Video Accessibility** | Captions, transcripts, keyboard controls |
+| **Quiz Accessibility** | Form labels, focus management, time warnings |
+| **Screen Reader** | Course structure, progress announcements |
+| **Keyboard Navigation** | Play/pause, seek, volume controls |
+| **Focus Management** | Next lesson focus, modal trapping |
+
+### 6.7 Frontend Performance Requirements
+
+| Metric | Target | Measurement |
+|--------|--------|-------------|
+| **Video Start Time** | < 2s | HLS.js metrics |
+| **Course Load** | < 1.5s | Performance API |
+| **Quiz Submission** | < 500ms | Network timing |
+| **Bundle Size** | < 200KB (player lazy loaded) | Webpack Analyzer |
+| **Video Buffering** | < 1% of playback | HLS.js events |
+
+### 6.8 Frontend Testing Requirements
+
+| Test Type | Coverage Target | Tools |
+|-----------|-----------------|-------|
+| **Unit Tests** | > 80% components | Jest, RTL |
+| **Video Player** | Playback, controls | Cypress, HLS mocking |
+| **Quiz Flow** | Submit, grading | Cypress |
+| **SCORM Tests** | Package loading | SCORM test suite |
+| **Accessibility** | All pages, player | axe-core |
+
+---
+
+## 7. AWS Deployment Architecture
 
 ### Compute Strategy
 - **Node.js API Gateway** on ECS Fargate for main API
@@ -598,7 +764,7 @@ Pipeline:
 
 ---
 
-## 7. AI/ML Feature Specification
+## 8. AI/ML Feature Specification
 
 ### Use Case 1: Content Recommendations
 
@@ -689,7 +855,7 @@ Grade short-answer and essay questions automatically using NLP.
 
 ---
 
-## 8. gRPC Service Definition
+## 9. gRPC Service Definition
 
 ```protobuf
 syntax = "proto3";
@@ -765,7 +931,7 @@ message GradeResponse {
 
 ---
 
-## 9. Monorepo Structure
+## 10. Monorepo Structure
 
 ```
 e-learning-platform/
@@ -828,7 +994,7 @@ e-learning-platform/
 
 ---
 
-## 10. Success Criteria
+## 11. Success Criteria
 
 1. **AI Recommendation Quality**: >70% click-through rate on recommendations
 2. **Adaptive Learning**: 15% improvement in quiz scores with adaptive paths
