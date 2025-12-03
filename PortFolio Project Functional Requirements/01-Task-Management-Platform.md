@@ -231,7 +231,7 @@ Backend:
   Documentation: Swagger/OpenAPI
 
 Frontend:
-  Framework: React 18 / Next.js 14
+  Framework: React 18
   State_Management: Redux Toolkit / React Query
   Styling: TailwindCSS 3.x
   Forms: React Hook Form + Zod

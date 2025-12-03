@@ -209,7 +209,7 @@ Backend:
   Async_Tasks: Celery with Redis broker
 
 Frontend:
-  Framework: React 18 / Next.js 14
+  Framework: Next.js 14
   State_Management: Redux Toolkit / React Query
   Styling: TailwindCSS 3.x
   Charts: D3.js / Chart.js

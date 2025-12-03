@@ -207,7 +207,7 @@ Python_Recommendation:
   Validation: Pydantic v2
 
 Frontend:
-  Framework: React 18 / Next.js 14
+  Framework: Next.js 14
   State_Management: Apollo Client + Zustand
   Styling: TailwindCSS 3.x
   Forms: React Hook Form + Zod

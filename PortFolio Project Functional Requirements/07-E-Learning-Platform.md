@@ -208,7 +208,7 @@ Python_AI:
   Validation: Pydantic v2
 
 Frontend:
-  Framework: React 18 / Next.js 14
+  Framework: Next.js 14
   State_Management: React Query / Zustand
   Styling: TailwindCSS 3.x
   Video_Player: Video.js / Plyr

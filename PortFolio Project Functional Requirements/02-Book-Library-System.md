@@ -194,7 +194,7 @@ Backend:
   Documentation: GraphQL Playground, OpenAPI for REST
 
 Frontend:
-  Framework: React 18 / Next.js 14
+  Framework: React 18
   State_Management: Apollo Client 3.x
   Styling: TailwindCSS 3.x
   Forms: React Hook Form + Zod

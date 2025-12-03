@@ -224,7 +224,7 @@ Backend:
   Documentation: OpenAPI 3.0 (Fastify Swagger)
 
 Frontend:
-  Framework: React 18 / Next.js 14
+  Framework: Next.js 14
   State_Management: Zustand / React Query
   Editor: TipTap / ProseMirror / Yjs bindings
   Styling: TailwindCSS 3.x
