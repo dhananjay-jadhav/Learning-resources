@@ -32,6 +32,30 @@ A modern, scalable e-learning platform for educators, students, organizations, a
 - Build real-time quiz and discussion features
 - Master event-driven architecture with Kafka
 
+### 🧠 Core Engineering Fundamentals
+
+This project provides excellent opportunities to apply and demonstrate core computer science concepts:
+
+| Area | Concept | Application in This Project |
+|------|---------|----------------------------|
+| **DSA** | Collaborative Filtering | Recommend courses based on similar learners' enrollment patterns |
+| **DSA** | Graph Algorithms | Model prerequisite chains and learning paths as directed acyclic graphs |
+| **DSA** | Matrix Factorization | User-course interaction matrix for personalized recommendations |
+| **DSA** | Search Algorithms | Efficient course discovery with relevance ranking |
+| **System Design** | Microservices | Node.js API Gateway with Python AI/ML services |
+| **System Design** | Event-Driven Architecture | Kafka for async communication between services |
+| **System Design** | Content Delivery | Video streaming with adaptive bitrate and CDN distribution |
+| **Networks** | gRPC | Efficient binary protocol for service-to-service communication |
+| **Networks** | HTTP/2 | Multiplexed connections for faster API responses |
+| **Networks** | Video Streaming | HLS/DASH protocols for adaptive video delivery |
+| **OS** | Container Orchestration | Kubernetes for scaling AI services based on demand |
+| **OS** | GPU Utilization | Optimize ML inference for recommendation generation |
+
+**Interview Preparation:**
+- Explain how collaborative filtering works for course recommendations
+- Discuss trade-offs between gRPC and REST for microservice communication
+- Design an adaptive learning system that personalizes content based on performance
+
 ---
 
 ## 2. Detailed Functional Requirements

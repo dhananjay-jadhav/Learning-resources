@@ -69,6 +69,27 @@ By completing this project, you will learn:
 - ✅ Write comprehensive **unit and integration tests** with Jest
 - ✅ Implement **CI/CD pipelines** with GitHub Actions
 
+### 🧠 Core Engineering Fundamentals
+
+This project provides excellent opportunities to apply and demonstrate core computer science concepts:
+
+| Area | Concept | Application in This Project |
+|------|---------|----------------------------|
+| **DSA** | Graphs (DFS/BFS) | Model task dependencies as a directed graph; detect cycles to prevent circular dependencies |
+| **DSA** | Topological Sort | Determine task execution order based on blockers and precedents |
+| **DSA** | Priority Queue/Heap | Efficiently schedule and prioritize tasks by due date and priority |
+| **System Design** | Database Sharding | Design for multi-tenant data isolation with organization-based partitioning |
+| **System Design** | Caching Strategy | Use Redis for session caching, frequently accessed tasks, and real-time pub/sub |
+| **System Design** | Event-Driven Architecture | BullMQ for async job processing (notifications, exports, integrations) |
+| **Networks** | WebSocket Protocol | Implement real-time task updates with connection management and heartbeats |
+| **Networks** | Load Balancing | Sticky sessions for WebSocket connections; round-robin for REST APIs |
+| **OS** | Connection Pooling | Manage PostgreSQL/MongoDB connection pools for optimal resource usage |
+
+**Interview Preparation:**
+- Explain how you would detect circular task dependencies (cycle detection in directed graphs)
+- Discuss trade-offs between PostgreSQL and MongoDB for different data types
+- Design the real-time notification system for 10K concurrent users
+
 ---
 
 ## 2. Detailed Functional Requirements

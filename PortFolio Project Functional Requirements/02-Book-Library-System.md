@@ -32,6 +32,28 @@ A powerful, extensible library management platform for readers, collectors, smal
 - Implement real-time subscriptions for live updates
 - Master code-first GraphQL schema development
 
+### 🧠 Core Engineering Fundamentals
+
+This project provides excellent opportunities to apply and demonstrate core computer science concepts:
+
+| Area | Concept | Application in This Project |
+|------|---------|----------------------------|
+| **DSA** | Trie | Implement efficient autocomplete for book search by title and author |
+| **DSA** | Inverted Index | Build full-text search indexing for book descriptions and notes |
+| **DSA** | Hash Tables | DataLoader pattern for batching and caching GraphQL queries |
+| **DSA** | Graph Traversal | Model "similar books" and "readers also liked" relationships |
+| **System Design** | N+1 Query Problem | Use DataLoader to batch database queries in GraphQL resolvers |
+| **System Design** | External API Integration | Circuit breaker pattern for Open Library/Google Books API calls |
+| **System Design** | Caching Layers | Redis for DataLoader cache, Elasticsearch for search indexes |
+| **Networks** | GraphQL Subscriptions | WebSocket-based real-time updates for friend activity feeds |
+| **Networks** | CDN Configuration | CloudFront for book cover image delivery with cache headers |
+| **OS** | Memory Management | Efficient handling of large book catalogs and batch imports |
+
+**Interview Preparation:**
+- Explain how a trie data structure improves autocomplete performance
+- Discuss how DataLoader solves the N+1 problem in GraphQL
+- Design a recommendation system for "books you might like"
+
 ---
 
 ## 2. Detailed Functional Requirements

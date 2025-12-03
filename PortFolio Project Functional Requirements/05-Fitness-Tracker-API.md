@@ -32,6 +32,29 @@ A secure, extensible API-centric platform for individuals and fitness profession
 - Build recommendation algorithms for workout suggestions
 - Master Python async patterns with asyncio and aiohttp
 
+### 🧠 Core Engineering Fundamentals
+
+This project provides excellent opportunities to apply and demonstrate core computer science concepts:
+
+| Area | Concept | Application in This Project |
+|------|---------|----------------------------|
+| **DSA** | Sliding Window | Calculate rolling averages (7-day steps, weekly calories, moving averages) |
+| **DSA** | Time Series Analysis | Store and query workout data efficiently over time ranges |
+| **DSA** | Sorting & Searching | Leaderboard rankings, personal best (PR) tracking |
+| **DSA** | Statistical Algorithms | Calculate percentiles, trends, and training load metrics |
+| **System Design** | Data Aggregation | Pre-compute daily/weekly/monthly summaries for dashboard performance |
+| **System Design** | OAuth2 Flows | Integrate with Fitbit, Garmin, Apple Health APIs |
+| **System Design** | Data Privacy | HIPAA-ready architecture for sensitive health information |
+| **Networks** | REST API Design | Design intuitive endpoints for mobile and wearable device clients |
+| **Networks** | Webhook Handling | Receive real-time updates from fitness device APIs |
+| **OS** | Async I/O | Use Python asyncio for concurrent API calls to external services |
+| **OS** | Process vs Thread | Async for I/O-bound tasks; multiprocessing for CPU-bound analytics |
+
+**Interview Preparation:**
+- Explain how sliding window algorithms optimize rolling average calculations
+- Discuss async/await patterns in Python and when to use them
+- Design a system to process real-time heart rate data from millions of devices
+
 ---
 
 ## 2. Detailed Functional Requirements

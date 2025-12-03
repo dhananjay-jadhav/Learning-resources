@@ -30,6 +30,29 @@ A secure, user-focused platform for individuals and families to manage income, e
 - Build dashboard analytics with aggregations
 - Master Django ORM for complex queries
 
+### 🧠 Core Engineering Fundamentals
+
+This project provides excellent opportunities to apply and demonstrate core computer science concepts:
+
+| Area | Concept | Application in This Project |
+|------|---------|----------------------------|
+| **DSA** | Dynamic Programming | Budget optimization and spending forecasts based on historical patterns |
+| **DSA** | Hash Tables | Fast transaction categorization using merchant ID lookups |
+| **DSA** | Tree Structures | Hierarchical category organization (e.g., Food → Groceries → Produce) |
+| **DSA** | Sorting & Aggregation | Group transactions by category, merchant, time period for analytics |
+| **System Design** | Rule Engine | Design pattern-based automatic transaction categorization |
+| **System Design** | Multi-Currency | Handle exchange rates, conversion history, and base currency calculations |
+| **System Design** | Data Sync | Reconcile transactions from multiple bank APIs with duplicate detection |
+| **Networks** | OAuth2/Open Banking | Secure bank account linking with Plaid/TrueLayer APIs |
+| **Networks** | API Rate Limiting | Handle bank API quotas and implement backoff strategies |
+| **OS** | Scheduled Jobs | Cron-based sync of bank transactions and exchange rates |
+| **OS** | Data Encryption | Encrypt sensitive financial data at rest and in transit |
+
+**Interview Preparation:**
+- Explain how you would design an automatic transaction categorization system
+- Discuss how dynamic programming can be applied to budget optimization
+- Design a system to sync transactions from 1000+ bank accounts reliably
+
 ---
 
 ## 2. Detailed Functional Requirements
