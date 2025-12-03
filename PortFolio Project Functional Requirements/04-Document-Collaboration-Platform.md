@@ -704,6 +704,176 @@ src/
 | **E2E Tests** | Document CRUD, sharing | Cypress, Playwright |
 | **Accessibility Tests** | Editor, modals | axe-core |
 
+### 6.10 Microfrontend Architecture
+
+#### Architecture Overview
+
+| Aspect | Implementation |
+|--------|----------------|
+| **Framework** | Module Federation (Webpack 5) |
+| **Container App** | Shell application handling routing, auth, shared state |
+| **Remote Apps** | Editor, Dashboard, Settings, Templates |
+| **Communication** | Custom Events + Shared State Store |
+| **Deployment** | Independent deployment per microfrontend |
+
+#### Microfrontend Structure
+
+```
+document-collaboration-platform/
+├── apps/
+│   ├── shell/                      # Container application
+│   │   ├── src/
+│   │   │   ├── App.tsx             # Main routing & layout
+│   │   │   ├── bootstrap.tsx       # Dynamic remote loading
+│   │   │   ├── shared/
+│   │   │   │   ├── authContext.tsx # Shared authentication
+│   │   │   │   ├── eventBus.ts     # Cross-MFE communication
+│   │   │   │   └── sharedStore.ts  # Zustand shared state
+│   │   │   └── remotes.d.ts        # Remote type declarations
+│   │   └── webpack.config.js       # Module Federation config
+│   ├── editor-mfe/                 # Document editor microfrontend
+│   │   ├── src/
+│   │   │   ├── EditorApp.tsx
+│   │   │   ├── components/
+│   │   │   │   ├── TipTapEditor/
+│   │   │   │   ├── Toolbar/
+│   │   │   │   ├── Collaboration/
+│   │   │   │   └── Comments/
+│   │   │   └── exposes.ts          # Exposed components
+│   │   └── webpack.config.js
+│   ├── dashboard-mfe/              # Dashboard microfrontend
+│   │   ├── src/
+│   │   │   ├── DashboardApp.tsx
+│   │   │   ├── components/
+│   │   │   │   ├── DocumentGrid/
+│   │   │   │   ├── RecentFiles/
+│   │   │   │   ├── ActivityFeed/
+│   │   │   │   └── QuickActions/
+│   │   │   └── exposes.ts
+│   │   └── webpack.config.js
+│   ├── settings-mfe/               # Settings microfrontend
+│   │   ├── src/
+│   │   │   ├── SettingsApp.tsx
+│   │   │   ├── components/
+│   │   │   │   ├── TeamManagement/
+│   │   │   │   ├── Permissions/
+│   │   │   │   └── Integrations/
+│   │   │   └── exposes.ts
+│   │   └── webpack.config.js
+│   └── templates-mfe/              # Templates microfrontend
+│       ├── src/
+│       │   ├── TemplatesApp.tsx
+│       │   ├── components/
+│       │   │   ├── TemplateGallery/
+│       │   │   ├── TemplateEditor/
+│       │   │   └── TemplatePreview/
+│       │   └── exposes.ts
+│       └── webpack.config.js
+├── packages/
+│   ├── shared-ui/                  # Shared component library
+│   │   ├── src/
+│   │   │   ├── Button/
+│   │   │   ├── Modal/
+│   │   │   ├── Input/
+│   │   │   └── index.ts
+│   │   └── package.json
+│   ├── shared-utils/               # Shared utilities
+│   │   ├── src/
+│   │   │   ├── api.ts
+│   │   │   ├── auth.ts
+│   │   │   └── analytics.ts
+│   │   └── package.json
+│   └── shared-types/               # Shared TypeScript types
+│       ├── src/
+│       │   ├── document.types.ts
+│       │   ├── user.types.ts
+│       │   └── index.ts
+│       └── package.json
+└── infrastructure/
+    └── docker/
+        ├── shell.Dockerfile
+        ├── editor-mfe.Dockerfile
+        ├── dashboard-mfe.Dockerfile
+        └── nginx.conf              # Routing configuration
+```
+
+#### Module Federation Configuration
+
+```javascript
+// shell/webpack.config.js
+const ModuleFederationPlugin = require('webpack/lib/container/ModuleFederationPlugin');
+
+module.exports = {
+  plugins: [
+    new ModuleFederationPlugin({
+      name: 'shell',
+      remotes: {
+        editorMfe: 'editorMfe@/editor/remoteEntry.js',
+        dashboardMfe: 'dashboardMfe@/dashboard/remoteEntry.js',
+        settingsMfe: 'settingsMfe@/settings/remoteEntry.js',
+        templatesMfe: 'templatesMfe@/templates/remoteEntry.js',
+      },
+      shared: {
+        react: { singleton: true, requiredVersion: '^18.0.0' },
+        'react-dom': { singleton: true, requiredVersion: '^18.0.0' },
+        zustand: { singleton: true },
+        '@tanstack/react-query': { singleton: true },
+      },
+    }),
+  ],
+};
+
+// editor-mfe/webpack.config.js
+module.exports = {
+  plugins: [
+    new ModuleFederationPlugin({
+      name: 'editorMfe',
+      filename: 'remoteEntry.js',
+      exposes: {
+        './EditorApp': './src/EditorApp',
+        './EditorToolbar': './src/components/Toolbar',
+        './CollaborationPanel': './src/components/Collaboration',
+      },
+      shared: {
+        react: { singleton: true, requiredVersion: '^18.0.0' },
+        'react-dom': { singleton: true, requiredVersion: '^18.0.0' },
+        yjs: { singleton: true },
+        '@tiptap/react': { singleton: true },
+      },
+    }),
+  ],
+};
+```
+
+#### Cross-Microfrontend Communication
+
+| Pattern | Use Case | Implementation |
+|---------|----------|----------------|
+| **Custom Events** | Document saved, user logged out | `window.dispatchEvent(new CustomEvent('doc:saved'))` |
+| **Shared Store** | Current user, active document | Zustand store exposed from shell |
+| **URL State** | Document ID, view mode | React Router in shell, params to remotes |
+| **Props Drilling** | Config, callbacks | Shell passes to lazy-loaded remotes |
+
+#### Deployment Strategy
+
+| Aspect | Strategy |
+|--------|----------|
+| **Independent Deploys** | Each MFE has its own CI/CD pipeline |
+| **Versioning** | Semantic versioning per MFE |
+| **CDN Hosting** | CloudFront for remoteEntry.js files |
+| **Fallbacks** | Graceful degradation if remote fails to load |
+| **Cache Strategy** | Long cache for assets, short for remoteEntry.js |
+
+#### Microfrontend Testing
+
+| Test Type | Scope | Tools |
+|-----------|-------|-------|
+| **Unit Tests** | Per MFE | Jest, RTL within each MFE |
+| **Integration** | Cross-MFE communication | Cypress with multiple origins |
+| **Contract Tests** | Shared interfaces | Pact, MSW |
+| **Visual Regression** | Shared components | Chromatic |
+| **E2E** | Full application flow | Playwright |
+
 ---
 
 ## 7. AWS Deployment Architecture

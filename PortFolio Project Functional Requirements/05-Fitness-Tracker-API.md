@@ -703,6 +703,217 @@ src/
 | **Offline Tests** | Log and sync | Cypress, Workbox |
 | **Accessibility** | All pages | axe-core |
 
+### 6.9 Microfrontend Architecture
+
+#### Architecture Overview
+
+| Aspect | Implementation |
+|--------|----------------|
+| **Framework** | Module Federation (Webpack 5) |
+| **Container App** | Shell application with auth, routing, shared services |
+| **Remote Apps** | Workout, Analytics, Nutrition, Devices, Trainer |
+| **Communication** | Event Bus + Shared Zustand Store |
+| **Deployment** | Independent CI/CD per microfrontend |
+
+#### Microfrontend Structure
+
+```
+fitness-tracker/
+├── apps/
+│   ├── shell/                      # Container application
+│   │   ├── src/
+│   │   │   ├── App.tsx             # Main routing & auth
+│   │   │   ├── bootstrap.tsx       # Dynamic remote loading
+│   │   │   ├── shared/
+│   │   │   │   ├── authContext.tsx # Authentication state
+│   │   │   │   ├── userStore.ts    # User profile, settings
+│   │   │   │   ├── eventBus.ts     # Cross-MFE events
+│   │   │   │   └── deviceSync.ts   # Shared device sync service
+│   │   │   └── remotes.d.ts
+│   │   └── webpack.config.js
+│   ├── workout-mfe/                # Workout logging microfrontend
+│   │   ├── src/
+│   │   │   ├── WorkoutApp.tsx
+│   │   │   ├── components/
+│   │   │   │   ├── WorkoutLogger/
+│   │   │   │   ├── ExercisePicker/
+│   │   │   │   ├── SetTracker/
+│   │   │   │   ├── RestTimer/
+│   │   │   │   └── WorkoutHistory/
+│   │   │   └── exposes.ts
+│   │   └── webpack.config.js
+│   ├── analytics-mfe/              # Analytics & charts microfrontend
+│   │   ├── src/
+│   │   │   ├── AnalyticsApp.tsx
+│   │   │   ├── components/
+│   │   │   │   ├── ProgressCharts/
+│   │   │   │   ├── PRTimeline/
+│   │   │   │   ├── BodyMetrics/
+│   │   │   │   ├── GoalProgress/
+│   │   │   │   └── WorkoutHeatmap/
+│   │   │   └── exposes.ts
+│   │   └── webpack.config.js
+│   ├── nutrition-mfe/              # Nutrition tracking microfrontend
+│   │   ├── src/
+│   │   │   ├── NutritionApp.tsx
+│   │   │   ├── components/
+│   │   │   │   ├── FoodSearch/
+│   │   │   │   ├── MealLogger/
+│   │   │   │   ├── MacroTracker/
+│   │   │   │   ├── CalorieChart/
+│   │   │   │   └── MealPlanner/
+│   │   │   └── exposes.ts
+│   │   └── webpack.config.js
+│   ├── devices-mfe/                # Device integration microfrontend
+│   │   ├── src/
+│   │   │   ├── DevicesApp.tsx
+│   │   │   ├── components/
+│   │   │   │   ├── DeviceList/
+│   │   │   │   ├── ConnectFlow/
+│   │   │   │   ├── SyncStatus/
+│   │   │   │   ├── FitbitConnect/
+│   │   │   │   ├── GarminConnect/
+│   │   │   │   └── AppleHealthSync/
+│   │   │   └── exposes.ts
+│   │   └── webpack.config.js
+│   └── trainer-mfe/                # Trainer/coach microfrontend
+│       ├── src/
+│       │   ├── TrainerApp.tsx
+│       │   ├── components/
+│       │   │   ├── ClientList/
+│       │   │   ├── WorkoutAssigner/
+│       │   │   ├── ClientProgress/
+│       │   │   ├── ProgramBuilder/
+│       │   │   └── ClientChat/
+│       │   └── exposes.ts
+│       └── webpack.config.js
+├── packages/
+│   ├── shared-ui/                  # Shared component library
+│   │   ├── src/
+│   │   │   ├── Button/
+│   │   │   ├── Card/
+│   │   │   ├── ProgressBar/
+│   │   │   ├── Timer/
+│   │   │   ├── Charts/
+│   │   │   └── index.ts
+│   │   └── package.json
+│   ├── shared-utils/               # Shared utilities
+│   │   ├── src/
+│   │   │   ├── api.ts
+│   │   │   ├── formatters.ts       # Weight, duration formatting
+│   │   │   ├── calculations.ts     # 1RM, calories, etc.
+│   │   │   └── offline.ts          # IndexedDB helpers
+│   │   └── package.json
+│   ├── shared-types/               # Shared TypeScript types
+│   │   ├── src/
+│   │   │   ├── workout.types.ts
+│   │   │   ├── exercise.types.ts
+│   │   │   ├── nutrition.types.ts
+│   │   │   ├── device.types.ts
+│   │   │   └── index.ts
+│   │   └── package.json
+│   └── exercise-db/                # Shared exercise database
+│       ├── src/
+│       │   ├── exercises.json
+│       │   ├── muscleGroups.ts
+│       │   └── index.ts
+│       └── package.json
+└── infrastructure/
+    └── docker/
+        ├── shell.Dockerfile
+        ├── workout-mfe.Dockerfile
+        ├── analytics-mfe.Dockerfile
+        ├── nutrition-mfe.Dockerfile
+        └── nginx.conf
+```
+
+#### Module Federation Configuration
+
+```javascript
+// shell/webpack.config.js
+const ModuleFederationPlugin = require('webpack/lib/container/ModuleFederationPlugin');
+
+module.exports = {
+  plugins: [
+    new ModuleFederationPlugin({
+      name: 'shell',
+      remotes: {
+        workoutMfe: 'workoutMfe@/workout/remoteEntry.js',
+        analyticsMfe: 'analyticsMfe@/analytics/remoteEntry.js',
+        nutritionMfe: 'nutritionMfe@/nutrition/remoteEntry.js',
+        devicesMfe: 'devicesMfe@/devices/remoteEntry.js',
+        trainerMfe: 'trainerMfe@/trainer/remoteEntry.js',
+      },
+      shared: {
+        react: { singleton: true, requiredVersion: '^18.0.0' },
+        'react-dom': { singleton: true, requiredVersion: '^18.0.0' },
+        zustand: { singleton: true },
+        '@tanstack/react-query': { singleton: true },
+        recharts: { singleton: true },
+      },
+    }),
+  ],
+};
+
+// workout-mfe/webpack.config.js
+module.exports = {
+  plugins: [
+    new ModuleFederationPlugin({
+      name: 'workoutMfe',
+      filename: 'remoteEntry.js',
+      exposes: {
+        './WorkoutApp': './src/WorkoutApp',
+        './WorkoutLogger': './src/components/WorkoutLogger',
+        './ExercisePicker': './src/components/ExercisePicker',
+        './RestTimer': './src/components/RestTimer',
+      },
+      shared: {
+        react: { singleton: true, requiredVersion: '^18.0.0' },
+        'react-dom': { singleton: true, requiredVersion: '^18.0.0' },
+      },
+    }),
+  ],
+};
+```
+
+#### Cross-Microfrontend Communication
+
+| Pattern | Use Case | Implementation |
+|---------|----------|----------------|
+| **Custom Events** | Workout started/completed, PR achieved | `window.dispatchEvent(new CustomEvent('workout:completed', { detail }))` |
+| **Shared Store** | Current user, active workout, sync status | Zustand store from shell |
+| **Service Workers** | Offline sync across MFEs | Shared Workbox configuration |
+| **Props** | User preferences, theme | Shell passes to lazy-loaded remotes |
+
+#### Device Sync Strategy
+
+| Device | Sync Pattern | MFE Responsibility |
+|--------|--------------|---------------------|
+| **Fitbit** | OAuth + webhook | devices-mfe handles auth, shell triggers sync |
+| **Garmin** | OAuth + polling | devices-mfe manages connection, analytics-mfe displays |
+| **Apple Health** | HealthKit API | devices-mfe reads, workout-mfe writes |
+| **Manual Entry** | Direct input | workout-mfe handles, syncs to shell store |
+
+#### Deployment Strategy
+
+| Aspect | Strategy |
+|--------|----------|
+| **Independent Deploys** | Each MFE deployed separately |
+| **Feature Flags** | LaunchDarkly for gradual rollouts |
+| **CDN Hosting** | CloudFront for static assets |
+| **PWA Support** | Shell manages service worker, MFEs cache independently |
+| **Offline First** | Each MFE uses IndexedDB via shared-utils |
+
+#### Microfrontend Testing
+
+| Test Type | Scope | Tools |
+|-----------|-------|-------|
+| **Unit Tests** | Per MFE components | Jest, RTL |
+| **Integration** | Cross-MFE workout flow | Cypress |
+| **Device Mocking** | OAuth flows, API responses | MSW, Cypress intercepts |
+| **Offline Tests** | Sync after reconnect | Cypress, service worker mocks |
+| **E2E** | Full workout logging flow | Playwright |
+
 ---
 
 ## 7. AWS Deployment Architecture
